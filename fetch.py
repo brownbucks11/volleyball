@@ -280,7 +280,7 @@ def main():
     ap.add_argument("--list-topics", metavar="GROUP_ID", help="show a group's Topics (sub-chats) and their IDs")
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--backfill", type=int, default=50, help="messages to scan on a group's first run")
-    ap.add_argument("--rescan", action="store_true", help="forget cursors and re-scan --backfill messages")
+    ap.add_argument("--rescan", action="store_true", help="rebuild everything from the last --backfill messages of each chat")
     args = ap.parse_args()
 
     token = os.environ.get("GROUPME_TOKEN")
@@ -299,7 +299,7 @@ def main():
     keep, excl, senders = rules(cfg)
     mode = cfg.get("mode", "exclude")
     state = {} if args.rescan else jload(STATE, {})
-    kept = jload(MESSAGES, [])
+    kept = [] if args.rescan else jload(MESSAGES, [])
     seen = {m["id"] for m in kept}
     skipped = [] if args.rescan else [x for x in jload(SKIPPED, []) if x["id"] not in seen]
     bot = os.environ.get("GROUPME_BOT_ID")
