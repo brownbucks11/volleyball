@@ -30,51 +30,66 @@ DTEND;VALUE=DATE:20261204
 SUMMARY:First Week of Practices
 END:VEVENT
 BEGIN:VEVENT
+UID:tourney-upstate-challenge@13u
+DTSTAMP:20261107T183946Z
+DTSTART;VALUE=DATE:20270110
+DTEND;VALUE=DATE:20270111
+SUMMARY:Upstate Challenge (tentative)
+LOCATION:Spartanburg\, SC
+DESCRIPTION:Palmetto Region event. 12U-14U play Sunday Jan 10 (15U-18U play Saturday). Schedule posts on AES the Wednesday before.
+END:VEVENT
+BEGIN:VEVENT
 UID:tourney-rumble-at-the-rock@13u
-DTSTAMP:20261107T183725Z
+DTSTAMP:20261107T183946Z
 DTSTART;VALUE=DATE:20270130
 DTEND;VALUE=DATE:20270131
 SUMMARY:Rumble at the Rock (tentative)
-LOCATION:Rock Hill Sports Center\, Rock Hill\, SC
+LOCATION:Rock Hill Sports & Event Center\, 326 Technology Center Way\, Rock Hill\, SC 29730
+DESCRIPTION:Palmetto Region "Rumble @ the Rock". 12U-14U Club play Saturday Jan 30 (15U-18U Sunday). Park in Deck A or B off Dave Lyle\; drop-off behind the building off Laurel St. Schedule on AES the Wednesday before.
 END:VEVENT
 BEGIN:VEVENT
 UID:tourney-beach-bash@13u
-DTSTAMP:20261107T183725Z
+DTSTAMP:20261107T183946Z
 DTSTART;VALUE=DATE:20270206
 DTEND;VALUE=DATE:20270208
 SUMMARY:Beach Bash (tentative)
-LOCATION:Myrtle Beach Sports Center\, Myrtle Beach\, SC
+LOCATION:Myrtle Beach Sports Center\, 2115 Farlow St\, Myrtle Beach\, SC 29577
+DESCRIPTION:Palmetto Region "Beach Ball Bash"\, 12U-18U Club & Power\, two days — plan a hotel. Hotel booking: https://presto.eventpipe.com/event/bade3666-79fb-4485-9e7e-4eb52f31941b
 END:VEVENT
 BEGIN:VEVENT
 UID:tourney-crosstown-throwdown@13u
-DTSTAMP:20261107T183725Z
+DTSTAMP:20261107T183946Z
 DTSTART;VALUE=DATE:20270214
 DTEND;VALUE=DATE:20270215
 SUMMARY:Crosstown Throwdown (tentative)
-LOCATION:TBA\, Columbia\, SC
+LOCATION:Columbia\, SC (gym TBA)
+DESCRIPTION:Palmetto Region "Crosstown Throwdown Club". 12U-14U play Sunday Feb 14 (15U-18U Saturday). Venue not posted yet.
 END:VEVENT
 BEGIN:VEVENT
 UID:tourney-cl-challenge@13u
-DTSTAMP:20261107T183725Z
-DTSTART;VALUE=DATE:20270314
-DTEND;VALUE=DATE:20270315
+DTSTAMP:20261107T183946Z
+DTSTART;VALUE=DATE:20270313
+DTEND;VALUE=DATE:20270314
 SUMMARY:Cl Challenge (tentative)
-LOCATION:TBA\, Easley\, Greenville\, Laurens\, SC
+LOCATION:Upstate\, SC — Easley Rec / Christ Church Episcopal / Chapman HS / Ridge at Laurens (gym by division\, TBA)
+DESCRIPTION:Palmetto Region "C1 Challenge" (the image's "Cl" is OCR). Region schedule has 12U-13U Club on SATURDAY Mar 13\; the club's image says Mar 14\, which is the 14U day — confirm with the coach. Online check-in 3/8-3/11. Adult admission $20\, kids free. Host: Carolina One.
 END:VEVENT
 BEGIN:VEVENT
 UID:tourney-palmetto-regionals@13u
-DTSTAMP:20261107T183725Z
+DTSTAMP:20261107T183946Z
 DTSTART;VALUE=DATE:20270326
 DTEND;VALUE=DATE:20270328
 SUMMARY:Palmetto Regionals (tentative)
-LOCATION:Rock Hill Sports Center\, Rock Hill\, SC
+LOCATION:Rock Hill Sports & Event Center\, 326 Technology Center Way\, Rock Hill\, SC 29730
+DESCRIPTION:PVA Regional Championships Week 1 — 13 Girls\, 2 days. STAY TO PLAY: hotels must be booked through the region's links (open 9/30/26\, sent to club directors). Online check-in 3/20-3/24. Admission cash/check: $20/day or $35 for 2 days\, kids free. Schedule on AES the Wednesday before. Stay-to-play policy: https://www.palmettoregionvb.org/page/show/3651936-regional-championships-stay-to-play-hotel-policy
 END:VEVENT
 BEGIN:VEVENT
 UID:tourney-palmetto-smash@13u
-DTSTAMP:20261107T183725Z
+DTSTAMP:20261107T183946Z
 DTSTART;VALUE=DATE:20270417
 DTEND;VALUE=DATE:20270419
 SUMMARY:Palmetto Smash (tentative)
-LOCATION:Prisma Health Performance Center\, Greer\, SC
+LOCATION:Prisma Health Performance Center\, 1529 Hwy 14\, Greer\, SC 29651
+DESCRIPTION:Palmetto Region "PVA Spring Smash"\, 12U-18U\, two days in Greer. Hotel booking: https://presto.eventpipe.com/event/e0d8e7a1-f604-4737-bb02-53506bab045f
 END:VEVENT
 END:VCALENDAR
