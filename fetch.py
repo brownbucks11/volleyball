@@ -1,18 +1,20 @@
 #!/usr/bin/env python3
 """
-Poll the club's GroupMe announcement group(s), keep the messages that matter to 13U,
-and write them to data/messages.json for build_site.py.
+Poll the club's GroupMe group(s): keep the announcements that apply to 13U, and pull the
+group calendar's events too.  Output goes to data/ for build_site.py.
 
-Needs:   GROUPME_TOKEN   (env; your personal access token from https://dev.groupme.com)
-Optional: GROUPME_BOT_ID (env; a bot in a private group - matches get reposted there too)
-Config:  config.json     (source groups, keywords, senders)
+Needs:    GROUPME_TOKEN   (env; your access token from https://dev.groupme.com)
+Optional: GROUPME_BOT_ID  (env; a bot in a private group - kept messages are reposted there)
+Config:   config.json     (sources, keywords, exclude patterns, senders, mode)
 
   python fetch.py --list-groups     show your groups and their IDs
   python fetch.py --dry-run         show what would be kept, change nothing
-  python fetch.py --backfill 200    on first run, also scan the last N messages
+  python fetch.py --backfill 200    on a group's first run, scan the last N messages
+  python fetch.py --rescan          forget cursors and re-apply the rules to the last --backfill messages
 """
 
 import argparse
+import datetime as dt
 import json
 import os
 import re
@@ -27,7 +29,8 @@ ROOT = Path(__file__).resolve().parent
 CONFIG = ROOT / "config.json"
 DATA = ROOT / "data"
 MESSAGES = DATA / "messages.json"   # kept messages, newest first
-SKIPPED = DATA / "skipped.json"     # last 100 messages that were NOT kept (for tuning keywords)
+SKIPPED = DATA / "skipped.json"     # last 100 messages that were NOT kept (for tuning the rules)
+EVENTS = DATA / "events.json"       # every calendar event seen, with a "kept" flag
 STATE = DATA / "state.json"         # last message id seen per group
 
 
@@ -49,7 +52,8 @@ def api(token, path, **params):
     if r.status_code == 304:
         return None
     r.raise_for_status()
-    return r.json()["response"]
+    body = r.json()
+    return body.get("response", body)
 
 
 def list_groups(token):
@@ -57,10 +61,11 @@ def list_groups(token):
         print(f"{g['id']:>10}  {g['name']}")
 
 
+# ---------------------------------------------------------------- messages
+
 def new_messages(token, gid, after_id, backfill):
     if after_id is None:
-        out = []
-        before = None
+        out, before = [], None
         while len(out) < backfill:
             resp = api(token, f"/groups/{gid}/messages", limit=100, **({"before_id": before} if before else {}))
             if not resp or not resp["messages"]:
@@ -111,6 +116,20 @@ def why(msg, keep, excl, senders, mode="exclude"):
     return "no other age group named"
 
 
+def attachments(msg):
+    """Flatten GroupMe attachments into something the page can render."""
+    out = []
+    for a in msg.get("attachments", []):
+        t = a.get("type")
+        if t in ("image", "video", "file", "linked_image") and a.get("url"):
+            out.append({"type": "image" if t == "linked_image" else t, "url": a["url"]})
+        elif t == "event" and a.get("event_id"):
+            out.append({"type": "event", "event_id": a["event_id"], "view": a.get("view")})
+        elif t == "poll" and a.get("poll_id"):
+            out.append({"type": "poll", "poll_id": a["poll_id"]})
+    return out
+
+
 def slim(msg, group_name, reason):
     return {
         "id": msg["id"],
@@ -119,7 +138,7 @@ def slim(msg, group_name, reason):
         "avatar": msg.get("avatar_url"),
         "ts": msg["created_at"],
         "text": msg.get("text") or "",
-        "attachments": [a["url"] for a in msg.get("attachments", []) if a.get("url")],
+        "attachments": attachments(msg),
         "likes": len(msg.get("favorited_by", [])),
         "reason": reason,
     }
@@ -130,12 +149,55 @@ def post_bot(bot_id, text):
         requests.post(f"{API}/bots/post", json={"bot_id": bot_id, "text": text[i:i + 950]}, timeout=30).raise_for_status()
 
 
+# ---------------------------------------------------------------- calendar events
+
+def fetch_events(token, gid, gname, keep, excl, senders, mode):
+    """All events from 60 days ago onward, with description + location, and whether 13U cares."""
+    since = (dt.datetime.now(dt.timezone.utc) - dt.timedelta(days=60)).strftime("%Y-%m-%dT%H:%M:%SZ")
+    try:
+        listing = api(token, f"/conversations/{gid}/events/list", end_at=since, limit=100) or {}
+    except requests.HTTPError as e:
+        print(f"events list failed for {gname}: {e}", file=sys.stderr)
+        return []
+    out = []
+    for ev in listing.get("events", []):
+        full = ev
+        try:
+            shown = api(token, f"/conversations/{gid}/events/show", event_id=ev["event_id"]) or {}
+            full = shown.get("event", shown) or ev
+        except requests.HTTPError:
+            pass
+        text = f"{full.get('name', '')}\n{full.get('description', '') or ''}"
+        loc = full.get("location") or {}
+        item = {
+            "event_id": full["event_id"],
+            "group": gname,
+            "name": full.get("name", ""),
+            "description": full.get("description") or "",
+            "start": full.get("start_at"),
+            "end": full.get("end_at"),
+            "all_day": bool(full.get("is_all_day")),
+            "timezone": full.get("timezone"),
+            "location": {"name": loc.get("name"), "address": loc.get("address"), "lat": loc.get("lat"), "lng": loc.get("lng")} if loc else None,
+            "image": full.get("image_url"),
+            "going": len(full.get("going") or []),
+            "updated": full.get("updated_at"),
+            "deleted": bool(full.get("deleted_at")),
+        }
+        item["reason"] = why({"name": "", "text": text}, keep, excl, senders, mode)
+        item["kept"] = item["reason"] is not None
+        out.append(item)
+    return out
+
+
+# ---------------------------------------------------------------- main
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--list-groups", action="store_true")
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--backfill", type=int, default=50, help="messages to scan on a group's first run")
-    ap.add_argument("--rescan", action="store_true", help="forget cursors and re-scan --backfill messages (re-applies rules to skipped ones)")
+    ap.add_argument("--rescan", action="store_true", help="forget cursors and re-scan --backfill messages")
     args = ap.parse_args()
 
     token = os.environ.get("GROUPME_TOKEN")
@@ -155,6 +217,7 @@ def main():
     skipped = [] if args.rescan else [x for x in jload(SKIPPED, []) if x["id"] not in seen]
     bot = os.environ.get("GROUPME_BOT_ID")
     added = 0
+    events = []
 
     for src in cfg["sources"]:
         gid, gname = str(src["group_id"]), src.get("name", str(src["group_id"]))
@@ -171,20 +234,22 @@ def main():
                 print("KEEP ", r, "|", item["name"], "|", item["text"][:90].replace("\n", " "))
                 if bot and not args.dry_run:
                     when = time.strftime("%a %m/%d %I:%M %p", time.localtime(m["created_at"]))
-                    post_bot(bot, f"[{gname}] {item['name']} @ {when}\n{item['text']}" +
-                             ("".join("\n" + u for u in item["attachments"])))
-            else:
-                if not any(x["id"] == m["id"] for x in skipped):
-                    skipped.append(slim(m, gname, None))
+                    links = "".join("\n" + a["url"] for a in item["attachments"] if a.get("url"))
+                    post_bot(bot, f"[{gname}] {item['name']} @ {when}\n{item['text']}{links}")
+            elif not any(x["id"] == m["id"] for x in skipped):
+                skipped.append(slim(m, gname, None))
         if msgs:
             state[gid] = msgs[-1]["id"]
+        events.extend(fetch_events(token, gid, gname, keep, excl, senders, mode))
 
     kept.sort(key=lambda m: m["ts"], reverse=True)
     skipped = sorted(skipped, key=lambda m: m["ts"], reverse=True)[:100]
-    print(f"{added} new message(s) kept; {len(kept)} total")
+    events.sort(key=lambda e: e.get("start") or "")
+    print(f"{added} new message(s) kept; {len(kept)} total; {sum(e['kept'] for e in events)}/{len(events)} events kept")
     if not args.dry_run:
         jsave(MESSAGES, kept)
         jsave(SKIPPED, skipped)
+        jsave(EVENTS, events)
         jsave(STATE, state)
 
 

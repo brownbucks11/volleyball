@@ -50,7 +50,14 @@ def test_sender_whitelist_is_case_insensitive():
 
 def test_slim_keeps_attachment_urls():
     msg = {"id": "9", "name": "A", "created_at": 5, "text": "x",
-           "attachments": [{"type": "image", "url": "https://i.groupme.com/x"}, {"type": "mentions"}],
+           "attachments": [{"type": "image", "url": "https://i.groupme.com/x"}, {"type": "mentions"},
+                           {"type": "event", "event_id": "E1", "view": "full"}],
            "favorited_by": ["1", "2"]}
     s = fetch.slim(msg, "Club", "r")
-    assert s["attachments"] == ["https://i.groupme.com/x"] and s["likes"] == 2 and s["group"] == "Club"
+    assert s["attachments"] == [{"type": "image", "url": "https://i.groupme.com/x"}, {"type": "event", "event_id": "E1", "view": "full"}]
+    assert s["likes"] == 2 and s["group"] == "Club"
+
+
+def test_event_filter_uses_name_and_description():
+    assert fetch.why({"name": "", "text": "Open Gym\nbring water"}, KEEP, EXCL, SENDERS)
+    assert fetch.why({"name": "", "text": "12u Girls Only!\n"}, KEEP, EXCL, SENDERS) is None

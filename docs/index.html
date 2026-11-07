@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>13U Announcements</title>
-<meta name="description" content="Only the GroupMe announcements that matter to the 13U team.">
+<meta name="description" content="Club GroupMe announcements, events and links that apply to the 13U team.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;500;600&display=swap">
@@ -13,7 +13,7 @@
     color-scheme: light dark;
     --navy: #15223d; --navy-2: #1f3057; --amber: #e0a422;
     --chalk: #f6f5f0; --paper: #ffffff; --ink: #1a1f2b; --ink-2: #5a6172; --line: #dcdad2;
-    --hit-bg: #fbf1d8; --link: #1d4f8c;
+    --hit-bg: #fbf1d8; --link: #1d4f8c; --act: #b8422f; --act-bg: #f8e4e0; --ev-bg: #e9f0fa;
     --display: "Barlow Condensed", "Arial Narrow", Impact, sans-serif;
     --body: "Barlow", "Segoe UI", Helvetica, Arial, sans-serif;
   }
@@ -21,36 +21,39 @@
     :root:not([data-theme="light"]) {
       --navy: #0c1426; --navy-2: #172445; --amber: #f0b62f;
       --chalk: #12182a; --paper: #1b2237; --ink: #ecebe4; --ink-2: #a3a9b8; --line: #2c3650;
-      --hit-bg: #3a2f14; --link: #8fb8f0;
+      --hit-bg: #3a2f14; --link: #8fb8f0; --act: #f08a77; --act-bg: #3d1e18; --ev-bg: #1a2742;
     }
   }
   :root[data-theme="dark"] {
     --navy: #0c1426; --navy-2: #172445; --amber: #f0b62f;
     --chalk: #12182a; --paper: #1b2237; --ink: #ecebe4; --ink-2: #a3a9b8; --line: #2c3650;
-    --hit-bg: #3a2f14; --link: #8fb8f0;
+    --hit-bg: #3a2f14; --link: #8fb8f0; --act: #f08a77; --act-bg: #3d1e18; --ev-bg: #1a2742;
   }
   * { box-sizing: border-box; }
   html, body { margin: 0; }
   body { background: var(--chalk); color: var(--ink); font-family: var(--body); font-size: 15px; line-height: 1.45; -webkit-font-smoothing: antialiased; }
-  a { color: var(--link); word-break: break-all; }
-  h1, h2 { font-family: var(--display); margin: 0; line-height: 1.05; }
+  a { color: var(--link); overflow-wrap: anywhere; }
+  h1, h2, h3 { font-family: var(--display); margin: 0; line-height: 1.05; }
 
   header { background: linear-gradient(135deg, var(--navy), var(--navy-2)); color: #fff; padding: 18px 16px 14px; border-bottom: 4px solid var(--amber); }
+  .wrap { max-width: 760px; margin: 0 auto; }
   header h1 { font-size: 30px; letter-spacing: .5px; }
   header .sub { color: #d9dce6; font-size: 13px; margin-top: 2px; }
   header .built { color: #b9bfd0; font-size: 12px; margin-top: 6px; }
+  header .built a { color: #f0b62f; }
 
-  nav { display: flex; gap: 6px; padding: 10px 16px 0; max-width: 760px; margin: 0 auto; }
-  nav button { font: 600 15px var(--display); letter-spacing: .4px; text-transform: uppercase; padding: 8px 14px; border-radius: 999px; border: 1px solid var(--line); background: var(--paper); color: var(--ink-2); cursor: pointer; }
+  nav { display: flex; gap: 6px; padding: 10px 16px 0; overflow-x: auto; }
+  nav button { font: 600 15px var(--display); letter-spacing: .4px; text-transform: uppercase; padding: 8px 14px; border-radius: 999px; border: 1px solid var(--line); background: var(--paper); color: var(--ink-2); cursor: pointer; white-space: nowrap; }
   nav button.on { background: var(--navy); color: #fff; border-color: var(--navy); }
+  nav button b { font-weight: 700; color: var(--amber); margin-left: 4px; }
 
-  .tools { max-width: 760px; margin: 10px auto 0; padding: 0 16px; display: flex; gap: 8px; }
+  .tools { margin: 10px 0 0; padding: 0 16px; display: flex; gap: 8px; }
   .tools input { flex: 1; font: 15px var(--body); padding: 9px 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--paper); color: var(--ink); }
 
-  main { max-width: 760px; margin: 0 auto; padding: 12px 16px 40px; }
+  main { padding: 12px 16px 40px; }
   .day { font-family: var(--display); font-size: 14px; letter-spacing: .6px; text-transform: uppercase; color: var(--ink-2); margin: 18px 0 6px; }
-  .msg { background: var(--paper); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; margin-bottom: 10px; }
-  .msg.new { border-left: 4px solid var(--amber); }
+  .card { background: var(--paper); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; margin-bottom: 10px; }
+  .card.new { border-left: 4px solid var(--amber); }
   .meta { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--ink-2); margin-bottom: 6px; }
   .meta img { width: 26px; height: 26px; border-radius: 50%; object-fit: cover; background: var(--line); }
   .meta .who { font-weight: 600; color: var(--ink); }
@@ -58,81 +61,171 @@
   .text { white-space: pre-wrap; overflow-wrap: anywhere; }
   mark { background: var(--hit-bg); color: inherit; padding: 0 2px; border-radius: 3px; }
   .att img { display: block; max-width: 100%; border-radius: 8px; margin-top: 8px; }
-  .why { font-size: 12px; color: var(--ink-2); margin-top: 8px; }
-  .why span { background: var(--hit-bg); padding: 1px 7px; border-radius: 999px; }
+  .tag { display: inline-block; font-size: 12px; padding: 1px 8px; border-radius: 999px; background: var(--hit-bg); color: var(--ink-2); margin-right: 6px; }
+  .tag.act { background: var(--act-bg); color: var(--act); font-weight: 600; }
+  .tag.ev { background: var(--ev-bg); }
+  .tags { margin-top: 8px; }
   .empty { color: var(--ink-2); text-align: center; padding: 40px 0; }
   .note { font-size: 13px; color: var(--ink-2); margin: 8px 0 0; }
+
+  /* events */
+  .ev { display: grid; grid-template-columns: 58px 1fr; gap: 12px; }
+  .ev.past { opacity: .6; }
+  .date { text-align: center; background: var(--ev-bg); border-radius: 10px; padding: 6px 2px; align-self: start; }
+  .date .m { font-family: var(--display); font-size: 12px; text-transform: uppercase; letter-spacing: .5px; color: var(--ink-2); }
+  .date .d { font-family: var(--display); font-size: 26px; font-weight: 700; line-height: 1; }
+  .date .w { font-size: 11px; color: var(--ink-2); }
+  .ev h3 { font-size: 19px; }
+  .ev .line { font-size: 13px; color: var(--ink-2); margin-top: 2px; }
+  .ev .desc { margin-top: 6px; white-space: pre-wrap; }
+  .ev .acts { margin-top: 8px; display: flex; gap: 12px; font-size: 13px; }
+
+  /* links */
+  .lnk h3 { font-size: 17px; }
+  .lnk .host { font-size: 12px; color: var(--ink-2); text-transform: uppercase; letter-spacing: .4px; }
+  .lnk .ctx { font-size: 13px; color: var(--ink-2); margin-top: 4px; }
+  .pinned { background: var(--ev-bg); border-color: transparent; }
 </style>
 </head>
 <body>
-<header>
+<header><div class="wrap">
   <h1 id="title">13U Announcements</h1>
   <div class="sub" id="subtitle"></div>
   <div class="built" id="built"></div>
-</header>
-<nav>
-  <button id="tab-kept" class="on">Kept</button>
-  <button id="tab-skipped">Skipped</button>
-</nav>
-<div class="tools"><input id="q" type="search" placeholder="Search…"></div>
-<main id="list"></main>
+</div></header>
+<div class="wrap">
+  <nav>
+    <button data-tab="events">Upcoming<b id="n-events"></b></button>
+    <button data-tab="feed" class="on">Feed<b id="n-feed"></b></button>
+    <button data-tab="links">Links<b id="n-links"></b></button>
+    <button data-tab="skipped">Skipped</button>
+  </nav>
+  <div class="tools"><input id="q" type="search" placeholder="Search…"></div>
+  <main id="list"></main>
+</div>
 
 <script src="data.js"></script>
 <script>
 (function () {
-  const D = window.DATA || { messages: [], skipped: [], keywords: [], senders: [] };
+  const D = Object.assign({ messages: [], events: [], links: [], skipped: [], keywords: [], pinned: [] }, window.DATA || {});
   const $ = (id) => document.getElementById(id);
+  const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  const kw = D.keywords.filter(Boolean).map((k) => k.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
+  const kwRe = kw.length ? new RegExp("\\b(" + kw.join("|") + ")\\b", "gi") : null;
+  const urlRe = /(https?:\/\/[^\s<>"')\]]+)/g;
+  const now = Date.now();
+
   $("title").textContent = D.title || "13U Announcements";
   $("subtitle").textContent = D.subtitle || "";
-  if (D.built) $("built").textContent = "Updated " + fmt(D.built * 1000, true);
+  const ics = D.ics ? new URL(D.ics, location.href).href.replace(/^https?:/, "webcal:") : "";
+  $("built").innerHTML = (D.built ? "Updated " + fmtDT(D.built * 1000) : "") + (ics ? ` · <a href="${esc(ics)}">Subscribe to calendar</a>` : "");
+  $("n-events").textContent = D.events.filter((e) => !isPast(e)).length || "";
+  $("n-feed").textContent = D.messages.length || "";
+  $("n-links").textContent = (D.links.length + D.pinned.length) || "";
 
-  const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-  const kw = (D.keywords || []).filter(Boolean).map((k) => k.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
-  const kwRe = kw.length ? new RegExp("\\b(" + kw.join("|") + ")\\b", "gi") : null;
-  const urlRe = /(https?:\/\/[^\s<]+)/g;
-
-  function fmt(ms, withDate) {
-    const d = new Date(ms);
-    const t = d.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
-    return withDate ? d.toLocaleDateString([], { weekday: "short", month: "short", day: "numeric" }) + " " + t : t;
-  }
+  function fmtT(ms) { return new Date(ms).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }); }
+  function fmtDT(ms) { return new Date(ms).toLocaleDateString([], { weekday: "short", month: "short", day: "numeric" }) + " " + fmtT(ms); }
   function dayKey(ts) { return new Date(ts * 1000).toLocaleDateString([], { weekday: "long", month: "long", day: "numeric" }); }
+  function isPast(e) { const end = e.end || e.start; return end && new Date(end).getTime() < now - 3 * 3600e3; }
   function body(text) {
     let h = esc(text).replace(urlRe, (u) => `<a href="${u}" target="_blank" rel="noopener">${u}</a>`);
     if (kwRe) h = h.replace(kwRe, "<mark>$1</mark>");
     return h;
   }
+  function att(a) {
+    if (a.type === "image" || (a.type === "video" && false)) return `<div class="att"><a href="${esc(a.url)}" target="_blank" rel="noopener"><img src="${esc(a.url)}" loading="lazy" alt=""></a></div>`;
+    if (a.url) return `<div class="att"><a href="${esc(a.url)}" target="_blank" rel="noopener">${esc(a.type)}: ${esc(a.url)}</a></div>`;
+    if (a.type === "event") {
+      const e = D.events.find((x) => x.event_id === a.event_id);
+      return e ? `<div class="tags"><a class="tag ev" href="#ev-${esc(e.event_id)}" data-go="events">📅 ${esc(e.name)} · ${esc(fmtDT(new Date(e.start).getTime()))}</a></div>` : "";
+    }
+    return "";
+  }
+  function gcal(e) {
+    const f = (s) => new Date(s).toISOString().replace(/[-:]|\.\d{3}/g, "");
+    const loc = e.location ? [e.location.name, e.location.address].filter(Boolean).join(", ") : "";
+    return "https://calendar.google.com/calendar/render?action=TEMPLATE&text=" + encodeURIComponent(e.name) +
+      "&dates=" + f(e.start) + "/" + f(e.end || e.start) + "&details=" + encodeURIComponent(e.description || "") + "&location=" + encodeURIComponent(loc);
+  }
 
-  let tab = "kept", seenKey = "13u_seen";
-  let lastSeen = 0;
-  try { lastSeen = Number(localStorage.getItem(seenKey) || 0); } catch (e) {}
+  let tab = "feed", lastSeen = 0;
+  try { lastSeen = Number(localStorage.getItem("13u_seen") || 0); } catch (e) {}
+  const q = () => $("q").value.trim().toLowerCase();
+  const hit = (s) => !q() || String(s).toLowerCase().includes(q());
 
-  function render() {
-    const q = $("q").value.trim().toLowerCase();
-    const src = tab === "kept" ? D.messages : D.skipped;
-    const items = src.filter((m) => !q || (m.text + " " + m.name).toLowerCase().includes(q));
-    const list = $("list");
-    if (!items.length) { list.innerHTML = `<div class="empty">${tab === "kept" ? "Nothing yet." : "Nothing skipped recently."}</div>`; return; }
-    let html = "", day = "";
-    if (tab === "skipped") html += `<p class="note">The last ${D.skipped.length} messages the filter did <b>not</b> keep. These named another age group. If one should have been kept, add a keyword or sender to config.json.</p>`;
+  function renderFeed(src, skippedNote) {
+    const items = src.filter((m) => hit(m.text + " " + m.name));
+    if (!items.length) return `<div class="empty">Nothing here.</div>`;
+    let html = skippedNote || "", day = "";
     for (const m of items) {
       const k = dayKey(m.ts);
       if (k !== day) { day = k; html += `<div class="day">${esc(k)}</div>`; }
-      const isNew = tab === "kept" && m.ts * 1000 > lastSeen;
-      html += `<article class="msg${isNew ? " new" : ""}">
-        <div class="meta">${m.avatar ? `<img src="${esc(m.avatar)}" alt="">` : ""}<span class="who">${esc(m.name)}</span><span class="when">${fmt(m.ts * 1000)}</span></div>
+      const isNew = src === D.messages && m.ts * 1000 > lastSeen;
+      html += `<article class="card${isNew ? " new" : ""}" id="msg-${esc(m.id)}">
+        <div class="meta">${m.avatar ? `<img src="${esc(m.avatar)}" alt="">` : ""}<span class="who">${esc(m.name)}</span><span class="when">${fmtT(m.ts * 1000)}</span></div>
         <div class="text">${body(m.text)}</div>
-        ${(m.attachments || []).map((u) => /\.(png|jpe?g|gif|webp)|groupme\.com/i.test(u) ? `<div class="att"><a href="${esc(u)}" target="_blank" rel="noopener"><img src="${esc(u)}" loading="lazy" alt=""></a></div>` : `<div class="att"><a href="${esc(u)}" target="_blank" rel="noopener">${esc(u)}</a></div>`).join("")}
-        ${m.reason ? `<div class="why"><span>${esc(m.reason)}</span></div>` : ""}
+        ${(m.attachments || []).map(att).join("")}
+        ${m.action ? `<div class="tags"><span class="tag act">Action needed</span></div>` : ""}
       </article>`;
     }
-    list.innerHTML = html;
+    return html;
   }
-  $("tab-kept").onclick = () => { tab = "kept"; $("tab-kept").classList.add("on"); $("tab-skipped").classList.remove("on"); render(); };
-  $("tab-skipped").onclick = () => { tab = "skipped"; $("tab-skipped").classList.add("on"); $("tab-kept").classList.remove("on"); render(); };
+
+  function renderEvents() {
+    const items = D.events.filter((e) => e.start && hit(e.name + " " + e.description + " " + (e.location?.name || "")));
+    const up = items.filter((e) => !isPast(e)), past = items.filter(isPast).reverse();
+    if (!items.length) return `<div class="empty">No events on the calendar yet.</div>`;
+    const card = (e) => {
+      const s = new Date(e.start), en = e.end ? new Date(e.end) : null;
+      const loc = e.location ? [e.location.name, e.location.address].filter(Boolean).join(", ") : "";
+      const when = e.all_day ? "All day" : fmtT(s) + (en ? " – " + fmtT(en) : "");
+      return `<article class="card ev${isPast(e) ? " past" : ""}" id="ev-${esc(e.event_id)}">
+        <div class="date"><div class="m">${s.toLocaleDateString([], { month: "short" })}</div><div class="d">${s.getDate()}</div><div class="w">${s.toLocaleDateString([], { weekday: "short" })}</div></div>
+        <div>
+          <h3>${esc(e.name)}</h3>
+          <div class="line">${esc(when)}${loc ? ` · <a href="https://maps.google.com/?q=${encodeURIComponent(loc)}" target="_blank" rel="noopener">${esc(loc)}</a>` : ""}</div>
+          ${e.description ? `<div class="desc">${body(e.description)}</div>` : ""}
+          ${e.image ? `<div class="att"><img src="${esc(e.image)}" loading="lazy" alt=""></div>` : ""}
+          <div class="acts"><a href="${esc(gcal(e))}" target="_blank" rel="noopener">Add to Google Calendar</a>${e.going ? `<span class="line">${e.going} going</span>` : ""}</div>
+        </div>
+      </article>`;
+    };
+    let html = up.length ? up.map(card).join("") : `<div class="empty">Nothing upcoming.</div>`;
+    if (past.length) html += `<div class="day">Past</div>` + past.map(card).join("");
+    return html;
+  }
+
+  function renderLinks() {
+    let html = "";
+    const pins = D.pinned.filter((p) => hit(p.title + " " + p.url));
+    if (pins.length) html += `<div class="day">Pinned</div>` + pins.map((p) => `<article class="card lnk pinned"><h3><a href="${esc(p.url)}" target="_blank" rel="noopener">${esc(p.title)}</a></h3>${p.note ? `<div class="ctx">${esc(p.note)}</div>` : ""}</article>`).join("");
+    const ls = D.links.filter((l) => hit(l.url + " " + l.context));
+    if (ls.length) html += `<div class="day">Mentioned in announcements</div>` + ls.map((l) => `<article class="card lnk">
+      <div class="host">${esc(l.host)}</div>
+      <h3><a href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.url.replace(/^https?:\/\/(www\.)?/, ""))}</a></h3>
+      <div class="ctx">${esc(l.by)} · ${esc(fmtDT(l.ts * 1000))} — <a href="#msg-${esc(l.msg_id)}" data-go="feed">${esc(l.context)}</a></div>
+    </article>`).join("");
+    return html || `<div class="empty">No links yet.</div>`;
+  }
+
+  function render() {
+    const list = $("list");
+    if (tab === "events") list.innerHTML = renderEvents();
+    else if (tab === "links") list.innerHTML = renderLinks();
+    else if (tab === "skipped") list.innerHTML = renderFeed(D.skipped, `<p class="note">The last ${D.skipped.length} messages the filter dropped because they named another age group. If one belongs here, tell whoever runs this page.</p>`);
+    else list.innerHTML = renderFeed(D.messages);
+    document.querySelectorAll("nav button").forEach((b) => b.classList.toggle("on", b.dataset.tab === tab));
+  }
+  document.querySelectorAll("nav button").forEach((b) => b.onclick = () => { tab = b.dataset.tab; render(); });
+  document.addEventListener("click", (ev) => {
+    const a = ev.target.closest("a[data-go]");
+    if (!a) return;
+    ev.preventDefault(); tab = a.dataset.go; render();
+    const t = document.querySelector(a.getAttribute("href")); if (t) t.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
   $("q").oninput = render;
   render();
-  try { localStorage.setItem(seenKey, String(Date.now())); } catch (e) {}
+  try { localStorage.setItem("13u_seen", String(Date.now())); } catch (e) {}
 })();
 </script>
 </body>
