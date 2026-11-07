@@ -2,7 +2,7 @@
   "site_title": "13U Announcements",
   "site_subtitle": "Club GroupMe, filtered down to what matters for 13U",
   "sources": [
-    { "group_id": "REPLACE_WITH_GROUP_ID", "name": "Club Announcements" }
+    { "group_id": "118087776", "name": "Club Announcements" }
   ],
   "keywords": ["13u", "13-u", "13 u", "13s", "all teams", "all age groups", "all athletes", "everyone", "every team", "whole club"],
   "regex": ["\\b13\\s*-?\\s*u\\b"],
