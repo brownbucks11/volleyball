@@ -123,7 +123,7 @@
   $("n-events").textContent = D.events.filter((e) => !isPast(e)).length || "";
   $("n-feed").textContent = D.messages.length || "";
   $("n-links").textContent = (D.links.length + D.pinned.length) || "";
-  $("n-files").textContent = (D.files || []).length || "";
+  $("n-files").textContent = (D.files || []).filter((f) => f.relevant).length || "";
 
   function fmtT(ms) { return new Date(ms).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }); }
   function fmtDT(ms) { return new Date(ms).toLocaleDateString([], { weekday: "short", month: "short", day: "numeric" }) + " " + fmtT(ms); }
@@ -211,13 +211,18 @@
     return html || `<div class="empty">No links yet.</div>`;
   }
 
+  let showAll = false;
   function renderFiles() {
-    const fs = D.files.filter((f) => hit(f.name + " " + f.context + " " + f.by));
-    if (!fs.length) return `<div class="empty">No schedules or files posted yet.</div>`;
-    return fs.map((f) => `<article class="card lnk" id="file-${esc(f.msg_id)}">
-      <div class="host">${esc(f.group)} · ${esc(f.by)} · ${esc(fmtDT(f.ts * 1000))}</div>
+    const all = D.files.filter((f) => hit(f.name + " " + f.context + " " + f.by + " " + f.excerpt));
+    const fs = showAll ? all : all.filter((f) => f.relevant);
+    const hidden = all.length - fs.length;
+    let html = `<p class="note">Schedule pages mentioning 13U or no age group. ${hidden ? `<a href="#" id="toggle-all">${showAll ? "Hide" : "Show"} ${hidden} other page${hidden > 1 ? "s" : ""}</a>` : ""}</p>`;
+    if (!fs.length) return html + `<div class="empty">No 13U schedules posted yet.</div>`;
+    return html + fs.map((f) => `<article class="card lnk${f.relevant ? "" : " past"}" id="file-${esc(f.msg_id)}-${f.page}">
+      <div class="host">${esc(f.group)} · ${esc(f.by)} · ${esc(fmtDT(f.ts * 1000))}${f.pages > 1 ? ` · page ${f.page} of ${f.pages}` : ""}</div>
       ${f.kind === "image" ? `<div class="att"><a href="${esc(f.url)}" target="_blank" rel="noopener"><img src="${esc(f.url)}" loading="lazy" alt=""></a></div>` :
         `<h3><a href="${esc(f.url)}" target="_blank" rel="noopener">📄 ${esc(f.name || f.url.split("/").pop())}</a></h3>`}
+      <div class="tags"><span class="tag${f.relevant ? " ev" : ""}">${esc(f.reason)}</span>${f.orig && f.orig !== f.url ? ` <a class="tag" href="${esc(f.orig)}" target="_blank" rel="noopener">original</a>` : ""}</div>
       ${f.context ? `<div class="ctx"><a href="#msg-${esc(f.msg_id)}" data-go="feed">${esc(f.context)}</a></div>` : ""}
     </article>`).join("");
   }
@@ -233,6 +238,7 @@
   }
   document.querySelectorAll("nav button").forEach((b) => b.onclick = () => { tab = b.dataset.tab; render(); });
   document.addEventListener("click", (ev) => {
+    if (ev.target.id === "toggle-all") { ev.preventDefault(); showAll = !showAll; render(); return; }
     const a = ev.target.closest("a[data-go]");
     if (!a) return;
     ev.preventDefault(); tab = a.dataset.go; render();

@@ -24,6 +24,8 @@ from pathlib import Path
 
 import requests
 
+import ocr
+
 API = "https://api.groupme.com/v3"
 ROOT = Path(__file__).resolve().parent
 CONFIG = ROOT / "config.json"
@@ -159,27 +161,69 @@ def slim(msg, group_name, reason):
 FILES = ROOT / "docs" / "files"
 
 
+def _ext(name, ctype):
+    return Path(name or "").suffix.lower() or {"application/pdf": ".pdf", "image/png": ".png", "image/jpeg": ".jpg",
+                                                "image/gif": ".gif", "image/webp": ".webp"}.get((ctype or "").split(";")[0], ".bin")
+
+
 def download_file(token, gid, att):
     """GroupMe files need the token; fetch once into docs/files so the page can link them."""
     FILES.mkdir(parents=True, exist_ok=True)
     existing = next(FILES.glob(att["file_id"] + ".*"), None)
     if existing:
         att["url"] = f"files/{existing.name}"
-        return
+        return existing
     r = requests.get(f"https://file.groupme.com/v1/{gid}/files/{att['file_id']}", params={"token": token}, timeout=60)
     if r.status_code != 200:
         print(f"file {att['file_id']} download failed: {r.status_code}", file=sys.stderr)
-        return
+        return None
     name = att.get("name") or ""
     m = re.search(r'filename\*?=(?:UTF-8\'\')?"?([^";]+)', r.headers.get("content-disposition", ""))
     if m and not name:
         name = m.group(1)
-    ext = Path(name).suffix.lower() or {"application/pdf": ".pdf", "image/png": ".png", "image/jpeg": ".jpg"}.get(r.headers.get("content-type", "").split(";")[0], ".bin")
-    if not att.get("name"):
-        att["name"] = name or (att["file_id"] + ext)
+    ext = _ext(name, r.headers.get("content-type"))
+    att["name"] = att.get("name") or name or (att["file_id"] + ext)
     dest = FILES / (att["file_id"] + ext)
     dest.write_bytes(r.content)
     att["url"] = f"files/{dest.name}"
+    return dest
+
+
+def download_image(att):
+    """Images are public, but a local copy lets us OCR them and serve them from the page."""
+    FILES.mkdir(parents=True, exist_ok=True)
+    key = re.sub(r"[^a-f0-9]", "", att["url"].split("/uploads/")[-1].split("/")[0]) or re.sub(r"\W", "", att["url"])[-32:]
+    existing = next(FILES.glob(key + ".*"), None)
+    if existing:
+        att["local"] = f"files/{existing.name}"
+        return existing
+    try:
+        r = requests.get(att["url"], timeout=60)
+        r.raise_for_status()
+    except requests.RequestException as e:
+        print(f"image download failed {att['url']}: {e}", file=sys.stderr)
+        return None
+    dest = FILES / (key + _ext("", r.headers.get("content-type")))
+    dest.write_bytes(r.content)
+    att["local"] = f"files/{dest.name}"
+    return dest
+
+
+def judge_pages(att, path, keep, excl, senders, mode):
+    """OCR an image or each PDF page and record which pages 13U cares about."""
+    pages = []
+    if path.suffix.lower() == ".pdf":
+        for n, text, png in ocr.pdf_pages(path, FILES, path.stem):
+            pages.append({"n": n, "url": f"files/{png.name}", "text": text[:400]})
+    else:
+        text = ocr.ocr_image(path)
+        pages.append({"n": 1, "url": att.get("local") or att["url"], "text": (text or "")[:400], "unread": text is None})
+    for pg in pages:
+        r = why({"name": "", "text": pg["text"]}, keep, excl, senders, mode)
+        pg["relevant"] = bool(r) or pg.get("unread", False)
+        pg["reason"] = r or ("couldn't read it" if pg.get("unread") else "names another age group")
+    att["pages"] = pages
+    att["relevant"] = any(p["relevant"] for p in pages)
 
 
 def post_bot(bot_id, text):
@@ -280,8 +324,9 @@ def main():
                 item = slim(m, gname, r)
                 if not args.dry_run:
                     for a in item["attachments"]:
-                        if a["type"] == "file":
-                            download_file(token, gid, a)
+                        path = download_file(token, gid, a) if a["type"] == "file" else (download_image(a) if a["type"] == "image" else None)
+                        if path and path.suffix.lower() in (".pdf", ".png", ".jpg", ".jpeg", ".gif", ".webp"):
+                            judge_pages(a, path, keep, excl, senders, mode)
                 kept.append(item)
                 seen.add(m["id"])
                 added += 1

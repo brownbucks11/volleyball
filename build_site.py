@@ -42,14 +42,20 @@ for m in messages:
 for m in messages:
     m["action"] = bool(ACTION_RE.search(m["text"]))
 
-# ---- files: every image / PDF posted in a kept message, newest first
+# ---- files: every image / PDF page posted in a kept message, newest first, with the OCR verdict
 files = []
 for m in messages:
     for a in m.get("attachments", []):
-        if a["type"] in ("image", "file") and a.get("url"):
-            files.append({"url": a["url"], "kind": "pdf" if a["url"].lower().endswith(".pdf") else ("image" if a["type"] == "image" or a["url"].lower().endswith((".png", ".jpg", ".jpeg", ".gif", ".webp")) else "file"),
-                          "name": a.get("name") or "", "ts": m["ts"], "by": m["name"], "group": m["group"], "msg_id": m["id"],
-                          "context": m["text"][:160].replace("\n", " ")})
+        if a["type"] not in ("image", "file") or not a.get("url"):
+            continue
+        base = {"name": a.get("name") or "", "ts": m["ts"], "by": m["name"], "group": m["group"], "msg_id": m["id"],
+                "context": m["text"][:160].replace("\n", " "), "orig": a["url"]}
+        pages = a.get("pages") or [{"n": 1, "url": a.get("local") or a["url"], "relevant": True, "reason": "not checked", "text": ""}]
+        for pg in pages:
+            u = pg["url"]
+            files.append({**base, "url": u, "page": pg["n"], "pages": len(pages), "relevant": pg["relevant"], "reason": pg["reason"],
+                          "excerpt": (pg.get("text") or "")[:140],
+                          "kind": "image" if u.lower().endswith((".png", ".jpg", ".jpeg", ".gif", ".webp")) else ("pdf" if u.lower().endswith(".pdf") else "file")})
 
 payload = {
     "title": cfg.get("site_title", "13U Announcements"),
