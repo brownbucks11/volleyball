@@ -9,7 +9,19 @@
   "attachments": [
    {
     "type": "image",
-    "url": "https://m.groupme.com/uploads/6589eff7bc0848a894fd0380a7b07ea8/1283x1822.original.jpeg"
+    "url": "https://m.groupme.com/uploads/6589eff7bc0848a894fd0380a7b07ea8/1283x1822.original.jpeg",
+    "local": "files/6589eff7bc0848a894fd0380a7b07ea8.jpg",
+    "pages": [
+     {
+      "n": 1,
+      "url": "files/6589eff7bc0848a894fd0380a7b07ea8.jpg",
+      "text": "PALMETTO RAGE VOLLEYBALL\n\n2027 Tournament Schedule\n\n15U-16U National | Tentative\nCharleston January Jam Jan. 2-3 Charleston, SC\nAAU Southern Power Super Regional Jan. 9-10 Rock Hill Sports & Events Center\nBeast of the Southeast Jan. 30-31 A5 Sportsplex or Cobb Galleria Stay-to-Play\nNike Savannah Showdown Feb. 13-15 Savannah Convention Center Stay-to-Play\nSouthern Classic Feb. 20-21 Rock Hill Sport",
+      "unread": false,
+      "relevant": false,
+      "reason": "names another age group"
+     }
+    ],
+    "relevant": false
    }
   ],
   "likes": 0,
@@ -22,7 +34,13 @@
   "avatar": "https://i.groupme.com/204x204.png.ae6fd52515e747c88db501db9e9fcfd9",
   "ts": 1793630739,
   "text": "Alicia  Lisee updated the time for the event 'First Week of Practices'",
-  "attachments": [],
+  "attachments": [
+   {
+    "type": "event",
+    "event_id": "fc2214664e7546c799bacffb400d8c69",
+    "view": "brief"
+   }
+  ],
   "likes": 0,
   "reason": "no other age group named"
  },
@@ -36,7 +54,19 @@
   "attachments": [
    {
     "type": "image",
-    "url": "https://m.groupme.com/uploads/4a74527482914f23875dc2dfae336309/2160x2862.original.jpeg"
+    "url": "https://m.groupme.com/uploads/4a74527482914f23875dc2dfae336309/2160x2862.original.jpeg",
+    "local": "files/4a74527482914f23875dc2dfae336309.jpg",
+    "pages": [
+     {
+      "n": 1,
+      "url": "files/4a74527482914f23875dc2dfae336309.jpg",
+      "text": "PALMETTO RAGE VOLLEYBALL\n\nWeekly Practice Schedule\n\nRAGE IGNITED | All times are PM\nSunday 3-5 16U Lisee 16U Taylor & Grace\nSunday 5-7 12U teams 12U teams\nSunday 7-9\nMonday 5-7\nMonday 7-9\n\nTuesday 5-7 13U Madisen & Eli 14U Kimora & Mackenzie\nTuesday 7-9 15U Makenzy & Madilee\nWednesday 5-7 16U Lisee 14U Kimora & Mackenzie\nWednesday 7-9 12U teams 12U teams\nThursday 5-7 13U Madisen & Eli 16U Taylor &",
+      "unread": false,
+      "relevant": true,
+      "reason": "mentions \"13U\""
+     }
+    ],
+    "relevant": true
    }
   ],
   "likes": 10,
@@ -49,7 +79,13 @@
   "avatar": "https://i.groupme.com/1024x1024.jpeg.286d9f214ad8408f85e2b31052f41c91",
   "ts": 1792778179,
   "text": "Alicia  Lisee created event 'Parent Meeting'",
-  "attachments": [],
+  "attachments": [
+   {
+    "type": "event",
+    "event_id": "f02c49d30a59446eb0b0dc7ad72ea538",
+    "view": "full"
+   }
+  ],
   "likes": 0,
   "reason": "no other age group named"
  },
@@ -93,7 +129,13 @@
   "avatar": "https://i.groupme.com/600x600.jpeg.e07e827219094878b2495f1832c9b231",
   "ts": 1791666347,
   "text": "Alicia  Lisee created event 'Jersey Sizing'",
-  "attachments": [],
+  "attachments": [
+   {
+    "type": "event",
+    "event_id": "baa1a150315340adad15ee51109247e5",
+    "view": "full"
+   }
+  ],
   "likes": 0,
   "reason": "no other age group named"
  },
@@ -104,7 +146,13 @@
   "avatar": "https://i.groupme.com/600x600.jpeg.e07e827219094878b2495f1832c9b231",
   "ts": 1791664210,
   "text": "Alicia  Lisee created event 'First Week of Practices'",
-  "attachments": [],
+  "attachments": [
+   {
+    "type": "event",
+    "event_id": "fc2214664e7546c799bacffb400d8c69",
+    "view": "full"
+   }
+  ],
   "likes": 0,
   "reason": "no other age group named"
  },
@@ -118,7 +166,19 @@
   "attachments": [
    {
     "type": "image",
-    "url": "https://m.groupme.com/uploads/2042d1b8ea3149daa1fa3e5a1def5d5a/1266x1641.original.jpeg"
+    "url": "https://m.groupme.com/uploads/2042d1b8ea3149daa1fa3e5a1def5d5a/1266x1641.original.jpeg",
+    "local": "files/2042d1b8ea3149daa1fa3e5a1def5d5a.jpg",
+    "pages": [
+     {
+      "n": 1,
+      "url": "files/2042d1b8ea3149daa1fa3e5a1def5d5a.jpg",
+      "text": "Palmetto Rage Volleyball\n(Tentative) 12U 2027 Tournament Schedule\n\nTournament Names Dates | Location\n\nRumble at the Rock Jan 30th Rock Hill Sports Center, Rock Hill, SC\n\nCrosstown Throwdown | Feb 14th TBA, Columbia, SC\n\nCl Challenge March 14th TBA, Easley, Greenville, Laurens, SC\n\nPalmetto Regionals March 26\" — 27th | Rock Hill Sports Center, Rock Hill, SC\nClub fees: This year, club fees: 11U and ",
+      "unread": false,
+      "relevant": false,
+      "reason": "names another age group"
+     }
+    ],
+    "relevant": false
    }
   ],
   "likes": 0,
@@ -134,7 +194,19 @@
   "attachments": [
    {
     "type": "image",
-    "url": "https://m.groupme.com/uploads/1c70e6ae72664e0ba4eb1364430ae6cb/1290x1635.original.jpeg"
+    "url": "https://m.groupme.com/uploads/1c70e6ae72664e0ba4eb1364430ae6cb/1290x1635.original.jpeg",
+    "local": "files/1c70e6ae72664e0ba4eb1364430ae6cb.jpg",
+    "pages": [
+     {
+      "n": 1,
+      "url": "files/1c70e6ae72664e0ba4eb1364430ae6cb.jpg",
+      "text": "Palmetto Rage Volleyball\n(Tentative) 13U and 14U 2027 Tournament Schedule\n\nTournament Names Dates | Location\n\nUpstate Challenge Star Center, Spartanburg, SC\n\nRumble at the Rock Jan 30th Rock Hill Sports Center, Rock Hill, SC\n\nBeach Bash Feb 6\" -7\" Myrtle Beach Sports Center, Myrtle Beach, SC\n\nCrosstown Throwdown | Feb 14th TBA, Columbia, SC\n\nCl Challenge March 14th TBA, Easley, Greenville, Laurens",
+      "unread": false,
+      "relevant": true,
+      "reason": "mentions \"13U\""
+     }
+    ],
+    "relevant": true
    }
   ],
   "likes": 0,
