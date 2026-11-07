@@ -151,8 +151,8 @@ def main():
     mode = cfg.get("mode", "exclude")
     state = {} if args.rescan else jload(STATE, {})
     kept = jload(MESSAGES, [])
-    skipped = jload(SKIPPED, [])
     seen = {m["id"] for m in kept}
+    skipped = [] if args.rescan else [x for x in jload(SKIPPED, []) if x["id"] not in seen]
     bot = os.environ.get("GROUPME_BOT_ID")
     added = 0
 
