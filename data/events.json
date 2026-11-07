@@ -1,0 +1,80 @@
+[
+ {
+  "event_id": "baa1a150315340adad15ee51109247e5",
+  "group": "Club Announcements",
+  "name": "Jersey Sizing",
+  "description": "Meet at the gym entrance. Will be set up there with jersey sets to try on. This is not a must only if you want to try on samples",
+  "start": "2026-10-12T18:15:00-04:00",
+  "end": "2026-10-12T18:45:00-04:00",
+  "all_day": false,
+  "timezone": "America/New_York",
+  "location": {
+   "name": "Catawba Ridge High School",
+   "address": "1180, Fort Mill Pkwy, Fort Mill, SC, 29715",
+   "lat": 34.9800937,
+   "lng": -80.9343374
+  },
+  "image": "https://i.groupme.com/1536x2048.jpeg.9a6ce60cdc4c4abd9830f671d0435a2c",
+  "going": 10,
+  "updated": "2026-10-12T22:27:16Z",
+  "deleted": false,
+  "reason": "no other age group named",
+  "kept": true
+ },
+ {
+  "event_id": "ed8d3d2f3ecb4709a475a0350736b410",
+  "group": "Club Announcements",
+  "name": "12u Girls Only!",
+  "description": "",
+  "start": "2026-11-12T19:00:00-05:00",
+  "end": "2026-11-12T20:30:00-05:00",
+  "all_day": false,
+  "timezone": "America/New_York",
+  "location": null,
+  "image": "https://i.groupme.com/1320x1931.jpeg.6b7376b6d56e426a8d1ff8f7de86b8e8",
+  "going": 16,
+  "updated": "2026-11-07T13:39:19Z",
+  "deleted": false,
+  "reason": null,
+  "kept": false
+ },
+ {
+  "event_id": "f02c49d30a59446eb0b0dc7ad72ea538",
+  "group": "Club Announcements",
+  "name": "Parent Meeting",
+  "description": "Parent Meeting for the 2027 Season",
+  "start": "2026-11-22T16:00:00-05:00",
+  "end": "2026-11-22T17:00:00-05:00",
+  "all_day": false,
+  "timezone": "America/New_York",
+  "location": {
+   "name": "Shield of Faith Family Church",
+   "address": "2499, Fire Tower Rd, Rock Hill, SC, 29730",
+   "lat": 34.89571,
+   "lng": -80.974193
+  },
+  "image": "https://i.groupme.com/200x133.gif.afe633d184c449e9b6d333f60a1919f3",
+  "going": 48,
+  "updated": "2026-11-02T17:43:30Z",
+  "deleted": false,
+  "reason": "no other age group named",
+  "kept": true
+ },
+ {
+  "event_id": "fc2214664e7546c799bacffb400d8c69",
+  "group": "Club Announcements",
+  "name": "First Week of Practices",
+  "description": "",
+  "start": "2026-11-29T00:00:00-05:00",
+  "end": "2026-12-04T00:00:00-05:00",
+  "all_day": true,
+  "timezone": "America/New_York",
+  "location": null,
+  "image": "https://i.groupme.com/474x474.jpeg.d7189d5d4aec4b259441cf820259d2e4",
+  "going": 53,
+  "updated": "2026-11-03T23:04:00Z",
+  "deleted": false,
+  "reason": "no other age group named",
+  "kept": true
+ }
+]
