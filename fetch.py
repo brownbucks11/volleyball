@@ -121,8 +121,10 @@ def attachments(msg):
     out = []
     for a in msg.get("attachments", []):
         t = a.get("type")
-        if t in ("image", "video", "file", "linked_image") and a.get("url"):
+        if t in ("image", "video", "linked_image") and a.get("url"):
             out.append({"type": "image" if t == "linked_image" else t, "url": a["url"]})
+        elif t == "file" and a.get("file_id"):
+            out.append({"type": "file", "file_id": a["file_id"], "name": a.get("file_name") or a.get("name") or ""})
         elif t == "event" and a.get("event_id"):
             out.append({"type": "event", "event_id": a["event_id"], "view": a.get("view")})
         elif t == "poll" and a.get("poll_id"):
@@ -142,6 +144,32 @@ def slim(msg, group_name, reason):
         "likes": len(msg.get("favorited_by", [])),
         "reason": reason,
     }
+
+
+FILES = ROOT / "docs" / "files"
+
+
+def download_file(token, gid, att):
+    """GroupMe files need the token; fetch once into docs/files so the page can link them."""
+    FILES.mkdir(parents=True, exist_ok=True)
+    existing = next(FILES.glob(att["file_id"] + ".*"), None)
+    if existing:
+        att["url"] = f"files/{existing.name}"
+        return
+    r = requests.get(f"https://file.groupme.com/v1/{gid}/files/{att['file_id']}", params={"token": token}, timeout=60)
+    if r.status_code != 200:
+        print(f"file {att['file_id']} download failed: {r.status_code}", file=sys.stderr)
+        return
+    name = att.get("name") or ""
+    m = re.search(r'filename\*?=(?:UTF-8\'\')?"?([^";]+)', r.headers.get("content-disposition", ""))
+    if m and not name:
+        name = m.group(1)
+    ext = Path(name).suffix.lower() or {"application/pdf": ".pdf", "image/png": ".png", "image/jpeg": ".jpg"}.get(r.headers.get("content-type", "").split(";")[0], ".bin")
+    if not att.get("name"):
+        att["name"] = name or (att["file_id"] + ext)
+    dest = FILES / (att["file_id"] + ext)
+    dest.write_bytes(r.content)
+    att["url"] = f"files/{dest.name}"
 
 
 def post_bot(bot_id, text):
@@ -184,7 +212,7 @@ def fetch_events(token, gid, gname, keep, excl, senders, mode):
             "updated": full.get("updated_at"),
             "deleted": bool(full.get("deleted_at")),
         }
-        item["reason"] = why({"name": "", "text": text}, keep, excl, senders, mode)
+        item["reason"] = f"from the {gname} chat" if mode == "all" else why({"name": "", "text": text}, keep, excl, senders, mode)
         item["kept"] = item["reason"] is not None
         out.append(item)
     return out
@@ -221,13 +249,18 @@ def main():
 
     for src in cfg["sources"]:
         gid, gname = str(src["group_id"]), src.get("name", str(src["group_id"]))
+        src_mode = "all" if src.get("filter") is False else mode
         msgs = new_messages(token, gid, state.get(gid), args.backfill)
         for m in msgs:
             if m.get("system") or m.get("sender_type") == "bot" or m["id"] in seen:
                 continue
-            r = why(m, keep, excl, senders, mode)
+            r = f"from the {gname} chat" if src_mode == "all" else why(m, keep, excl, senders, mode)
             if r:
                 item = slim(m, gname, r)
+                if not args.dry_run:
+                    for a in item["attachments"]:
+                        if a["type"] == "file":
+                            download_file(token, gid, a)
                 kept.append(item)
                 seen.add(m["id"])
                 added += 1
@@ -240,7 +273,7 @@ def main():
                 skipped.append(slim(m, gname, None))
         if msgs:
             state[gid] = msgs[-1]["id"]
-        events.extend(fetch_events(token, gid, gname, keep, excl, senders, mode))
+        events.extend(fetch_events(token, gid, gname, keep, excl, senders, src_mode if src_mode == "all" else mode))
 
     kept.sort(key=lambda m: m["ts"], reverse=True)
     skipped = sorted(skipped, key=lambda m: m["ts"], reverse=True)[:100]

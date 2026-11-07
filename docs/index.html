@@ -97,6 +97,7 @@
   <nav>
     <button data-tab="events">Upcoming<b id="n-events"></b></button>
     <button data-tab="feed" class="on">Feed<b id="n-feed"></b></button>
+    <button data-tab="files">Schedules<b id="n-files"></b></button>
     <button data-tab="links">Links<b id="n-links"></b></button>
     <button data-tab="skipped">Skipped</button>
   </nav>
@@ -107,7 +108,7 @@
 <script src="data.js"></script>
 <script>
 (function () {
-  const D = Object.assign({ messages: [], events: [], links: [], skipped: [], keywords: [], pinned: [] }, window.DATA || {});
+  const D = Object.assign({ messages: [], events: [], links: [], files: [], skipped: [], keywords: [], pinned: [] }, window.DATA || {});
   const $ = (id) => document.getElementById(id);
   const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   const kw = D.keywords.filter(Boolean).map((k) => k.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
@@ -122,6 +123,7 @@
   $("n-events").textContent = D.events.filter((e) => !isPast(e)).length || "";
   $("n-feed").textContent = D.messages.length || "";
   $("n-links").textContent = (D.links.length + D.pinned.length) || "";
+  $("n-files").textContent = (D.files || []).length || "";
 
   function fmtT(ms) { return new Date(ms).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }); }
   function fmtDT(ms) { return new Date(ms).toLocaleDateString([], { weekday: "short", month: "short", day: "numeric" }) + " " + fmtT(ms); }
@@ -133,7 +135,8 @@
     return h;
   }
   function att(a) {
-    if (a.type === "image" || (a.type === "video" && false)) return `<div class="att"><a href="${esc(a.url)}" target="_blank" rel="noopener"><img src="${esc(a.url)}" loading="lazy" alt=""></a></div>`;
+    if (a.type === "file" && a.url) return `<div class="tags"><a class="tag ev" href="${esc(a.url)}" target="_blank" rel="noopener">📄 ${esc(a.name || a.url.split("/").pop())}</a></div>`;
+    if (a.type === "image") return `<div class="att"><a href="${esc(a.url)}" target="_blank" rel="noopener"><img src="${esc(a.url)}" loading="lazy" alt=""></a></div>`;
     if (a.url) return `<div class="att"><a href="${esc(a.url)}" target="_blank" rel="noopener">${esc(a.type)}: ${esc(a.url)}</a></div>`;
     if (a.type === "event") {
       const e = D.events.find((x) => x.event_id === a.event_id);
@@ -208,9 +211,21 @@
     return html || `<div class="empty">No links yet.</div>`;
   }
 
+  function renderFiles() {
+    const fs = D.files.filter((f) => hit(f.name + " " + f.context + " " + f.by));
+    if (!fs.length) return `<div class="empty">No schedules or files posted yet.</div>`;
+    return fs.map((f) => `<article class="card lnk" id="file-${esc(f.msg_id)}">
+      <div class="host">${esc(f.group)} · ${esc(f.by)} · ${esc(fmtDT(f.ts * 1000))}</div>
+      ${f.kind === "image" ? `<div class="att"><a href="${esc(f.url)}" target="_blank" rel="noopener"><img src="${esc(f.url)}" loading="lazy" alt=""></a></div>` :
+        `<h3><a href="${esc(f.url)}" target="_blank" rel="noopener">📄 ${esc(f.name || f.url.split("/").pop())}</a></h3>`}
+      ${f.context ? `<div class="ctx"><a href="#msg-${esc(f.msg_id)}" data-go="feed">${esc(f.context)}</a></div>` : ""}
+    </article>`).join("");
+  }
+
   function render() {
     const list = $("list");
     if (tab === "events") list.innerHTML = renderEvents();
+    else if (tab === "files") list.innerHTML = renderFiles();
     else if (tab === "links") list.innerHTML = renderLinks();
     else if (tab === "skipped") list.innerHTML = renderFeed(D.skipped, `<p class="note">The last ${D.skipped.length} messages the filter dropped because they named another age group. If one belongs here, tell whoever runs this page.</p>`);
     else list.innerHTML = renderFeed(D.messages);

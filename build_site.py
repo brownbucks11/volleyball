@@ -42,6 +42,15 @@ for m in messages:
 for m in messages:
     m["action"] = bool(ACTION_RE.search(m["text"]))
 
+# ---- files: every image / PDF posted in a kept message, newest first
+files = []
+for m in messages:
+    for a in m.get("attachments", []):
+        if a["type"] in ("image", "file") and a.get("url"):
+            files.append({"url": a["url"], "kind": "pdf" if a["url"].lower().endswith(".pdf") else ("image" if a["type"] == "image" or a["url"].lower().endswith((".png", ".jpg", ".jpeg", ".gif", ".webp")) else "file"),
+                          "name": a.get("name") or "", "ts": m["ts"], "by": m["name"], "group": m["group"], "msg_id": m["id"],
+                          "context": m["text"][:160].replace("\n", " ")})
+
 payload = {
     "title": cfg.get("site_title", "13U Announcements"),
     "subtitle": cfg.get("site_subtitle", ""),
@@ -52,6 +61,7 @@ payload = {
     "messages": messages,
     "events": events,
     "links": links,
+    "files": files,
     "skipped": skipped,
 }
 DOCS.mkdir(exist_ok=True)
@@ -88,4 +98,4 @@ lines.append("END:VCALENDAR")
 (DOCS / "ics").mkdir(exist_ok=True)
 (DOCS / "ics" / "13u.ics").write_text("\r\n".join(lines) + "\r\n")
 
-print(f"wrote data.js: {len(messages)} messages, {len(events)} events, {len(links)} links")
+print(f"wrote data.js: {len(messages)} messages, {len(events)} events, {len(links)} links, {len(files)} files")

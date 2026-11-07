@@ -61,3 +61,9 @@ def test_slim_keeps_attachment_urls():
 def test_event_filter_uses_name_and_description():
     assert fetch.why({"name": "", "text": "Open Gym\nbring water"}, KEEP, EXCL, SENDERS)
     assert fetch.why({"name": "", "text": "12u Girls Only!\n"}, KEEP, EXCL, SENDERS) is None
+
+
+def test_file_attachments_are_captured():
+    msg = {"id": "2", "name": "A", "created_at": 1, "text": "schedule attached",
+           "attachments": [{"type": "file", "file_id": "F1", "file_name": "Week1.pdf"}]}
+    assert fetch.slim(msg, "Sched", "r")["attachments"] == [{"type": "file", "file_id": "F1", "name": "Week1.pdf"}]
