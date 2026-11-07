@@ -7,6 +7,8 @@ import re
 import time
 from pathlib import Path
 
+import tournaments as tn
+
 ROOT = Path(__file__).resolve().parent
 DOCS = ROOT / "docs"
 cfg = json.loads((ROOT / "config.json").read_text())
@@ -66,6 +68,11 @@ for m in load("messages.json", []):
                           "excerpt": (pg.get("text") or "")[:140],
                           "kind": "image" if u.lower().endswith((".png", ".jpg", ".jpeg", ".gif", ".webp")) else ("pdf" if u.lower().endswith(".pdf") else "file")})
 
+# ---- tournaments + practice slots from the schedule images, plus tournaments.json overrides
+all_msgs = load("messages.json", [])
+tourneys, practices, tsource = tn.collect(all_msgs)
+tourneys = tn.apply_overrides(tourneys)
+
 payload = {
     "title": cfg.get("site_title", "13U Announcements"),
     "subtitle": cfg.get("site_subtitle", ""),
@@ -75,6 +82,9 @@ payload = {
     "ics": "ics/13u.ics",
     "messages": feed,
     "events": events,
+    "tournaments": tourneys,
+    "tournaments_source": tsource,
+    "practices": practices,
     "links": links,
     "files": files,
     "skipped": skipped,
@@ -109,8 +119,20 @@ for e in events:
     if where:
         lines.append(f"LOCATION:{esc(where)}")
     lines.append("END:VEVENT")
+for t in tourneys:
+    if not t.get("start"):
+        continue
+    end = dt.date.fromisoformat(t["end"] or t["start"]) + dt.timedelta(days=1)
+    lines += ["BEGIN:VEVENT", f"UID:tourney-{t['key'].replace(' ', '-')}@13u", f"DTSTAMP:{dt.datetime.now(dt.timezone.utc).strftime('%Y%m%dT%H%M%SZ')}",
+              f"DTSTART;VALUE=DATE:{t['start'].replace('-', '')}", f"DTEND;VALUE=DATE:{end.strftime('%Y%m%d')}",
+              f"SUMMARY:{esc(t['name'])}" + ("" if t["status"] in ("official", "confirmed") else " (tentative)")]
+    if t.get("location"):
+        lines.append(f"LOCATION:{esc(t['location'])}")
+    if t.get("notes"):
+        lines.append(f"DESCRIPTION:{esc(t['notes'])}")
+    lines.append("END:VEVENT")
 lines.append("END:VCALENDAR")
 (DOCS / "ics").mkdir(exist_ok=True)
 (DOCS / "ics" / "13u.ics").write_text("\r\n".join(lines) + "\r\n")
 
-print(f"wrote data.js: {len(feed)} messages, {len(events)} events, {len(links)} links, {len(files)} files")
+print(f"wrote data.js: {len(tourneys)} tournaments, {len(feed)} messages, {len(events)} events, {len(links)} links, {len(files)} files")

@@ -85,6 +85,12 @@
   .lnk .host { font-size: 12px; color: var(--ink-2); text-transform: uppercase; letter-spacing: .4px; }
   .lnk .ctx { font-size: 13px; color: var(--ink-2); margin-top: 4px; }
   .pinned { background: var(--ev-bg); border-color: transparent; }
+  .status { font: 600 11px var(--display); letter-spacing: .5px; text-transform: uppercase; padding: 2px 8px; border-radius: 999px; background: var(--tie-bg, var(--line)); color: var(--ink-2); }
+  .status.confirmed { background: #e3f1e8; color: #2e7d4f; }
+  .status.official { background: var(--navy); color: #fff; }
+  .countdown { font-size: 12px; color: var(--ink-2); margin-left: 8px; }
+  .practice { background: var(--paper); border: 1px solid var(--line); border-radius: 12px; padding: 10px 14px; margin-bottom: 10px; display: flex; gap: 10px; align-items: baseline; }
+  .practice b { font-family: var(--display); font-size: 17px; text-transform: uppercase; letter-spacing: .4px; }
 </style>
 </head>
 <body>
@@ -95,6 +101,7 @@
 </div></header>
 <div class="wrap">
   <nav>
+    <button data-tab="tourneys">Tournaments<b id="n-tourneys"></b></button>
     <button data-tab="events">Upcoming<b id="n-events"></b></button>
     <button data-tab="feed" class="on">Feed<b id="n-feed"></b></button>
     <button data-tab="files">Schedules<b id="n-files"></b></button>
@@ -108,7 +115,7 @@
 <script src="data.js"></script>
 <script>
 (function () {
-  const D = Object.assign({ messages: [], events: [], links: [], files: [], skipped: [], keywords: [], pinned: [] }, window.DATA || {});
+  const D = Object.assign({ messages: [], events: [], tournaments: [], practices: [], links: [], files: [], skipped: [], keywords: [], pinned: [] }, window.DATA || {});
   const $ = (id) => document.getElementById(id);
   const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   const kw = D.keywords.filter(Boolean).map((k) => k.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
@@ -121,6 +128,7 @@
   const ics = D.ics ? new URL(D.ics, location.href).href.replace(/^https?:/, "webcal:") : "";
   $("built").innerHTML = (D.built ? "Updated " + fmtDT(D.built * 1000) : "") + (ics ? ` · <a href="${esc(ics)}">Subscribe to calendar</a>` : "");
   $("n-events").textContent = D.events.filter((e) => !isPast(e)).length || "";
+  $("n-tourneys").textContent = D.tournaments.filter((t) => !t.end || new Date(t.end + "T23:59") > now).length || "";
   $("n-feed").textContent = D.messages.length || "";
   $("n-links").textContent = (D.links.length + D.pinned.length) || "";
   $("n-files").textContent = (D.files || []).filter((f) => f.relevant).length || "";
@@ -229,9 +237,35 @@
     </article>`).join("");
   }
 
+  function renderTourneys() {
+    let html = "";
+    if (D.practices.length) html += `<div class="practice"><b>Practice</b><span>${D.practices.map((p) => esc(p.day + "s " + p.time)).join(" · ")}${D.practices[0].coaches ? ` <span class="countdown">${esc(D.practices[0].coaches)}</span>` : ""}</span></div>`;
+    const ts = D.tournaments.filter((t) => hit(t.name + " " + t.location + " " + (t.notes || "")));
+    if (!ts.length) return html + `<div class="empty">No tournament schedule posted yet.</div>`;
+    const up = ts.filter((t) => !t.end || new Date(t.end + "T23:59") > now), past = ts.filter((t) => t.end && new Date(t.end + "T23:59") <= now);
+    const card = (t) => {
+      const s = t.start ? new Date(t.start + "T12:00") : null;
+      const days = s ? Math.ceil((s - now) / 864e5) : null;
+      return `<article class="card ev${s && days < 0 ? " past" : ""}">
+        <div class="date">${s ? `<div class="m">${s.toLocaleDateString([], { month: "short" })}</div><div class="d">${s.getDate()}</div><div class="w">${t.end && t.end !== t.start ? "–" + new Date(t.end + "T12:00").getDate() : s.toLocaleDateString([], { weekday: "short" })}</div>` : `<div class="m">Date</div><div class="d" style="font-size:18px;padding:6px 0">TBA</div>`}</div>
+        <div>
+          <h3>${t.link ? `<a href="${esc(t.link)}" target="_blank" rel="noopener">${esc(t.name)}</a>` : esc(t.name)}</h3>
+          <div class="line">${esc(t.dates)}${t.location ? ` · <a href="https://maps.google.com/?q=${encodeURIComponent(t.location)}" target="_blank" rel="noopener">${esc(t.location)}</a>` : ""}</div>
+          ${t.notes ? `<div class="desc">${body(t.notes)}</div>` : ""}
+          <div class="acts"><span class="status ${esc(t.status)}">${esc(t.status)}</span>${days !== null && days >= 0 ? `<span class="countdown">${days === 0 ? "today" : days === 1 ? "tomorrow" : "in " + days + " days"}</span>` : ""}</div>
+        </div>
+      </article>`;
+    };
+    html += up.map(card).join("");
+    if (past.length) html += `<div class="day">Past</div>` + past.map(card).join("");
+    if (D.tournaments_source) html += `<p class="note">From the schedule ${esc(D.tournaments_source.by)} posted ${esc(fmtDT(D.tournaments_source.ts * 1000))} — <a href="${esc(D.tournaments_source.url)}" target="_blank" rel="noopener">see the image</a>. "Tentative" is the club's word until a coach confirms.</p>`;
+    return html;
+  }
+
   function render() {
     const list = $("list");
-    if (tab === "events") list.innerHTML = renderEvents();
+    if (tab === "tourneys") list.innerHTML = renderTourneys();
+    else if (tab === "events") list.innerHTML = renderEvents();
     else if (tab === "files") list.innerHTML = renderFiles();
     else if (tab === "links") list.innerHTML = renderLinks();
     else if (tab === "skipped") list.innerHTML = renderFeed(D.skipped, `<p class="note">The last ${D.skipped.length} messages the filter dropped because they named another age group. If one belongs here, tell whoever runs this page.</p>`);

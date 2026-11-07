@@ -67,3 +67,22 @@ def test_file_attachments_are_captured():
     msg = {"id": "2", "name": "A", "created_at": 1, "text": "schedule attached",
            "attachments": [{"type": "file", "file_id": "F1", "file_name": "Week1.pdf"}]}
     assert fetch.slim(msg, "Sched", "r")["attachments"] == [{"type": "file", "file_id": "F1", "name": "Week1.pdf"}]
+
+
+def test_tournament_rows_parse():
+    import tournaments as tn
+    text = ("Palmetto Rage Volleyball\n(Tentative) 13U and 14U 2027 Tournament Schedule\nTournament Names Dates | Location\n"
+            "Upstate Challenge Star Center, Spartanburg, SC\nRumble at the Rock Jan 30th Rock Hill Sports Center, Rock Hill, SC\n"
+            "Beach Bash Feb 6\" -7\" Myrtle Beach Sports Center, Myrtle Beach, SC\nPalmetto Regionals March 26\" — 27th | Rock Hill Sports Center, Rock Hill, SC\n"
+            "Club fees: This year, club fees: 13U and 14U - $2,250\nVery important: Jan 1st nothing\n")
+    ts = tn.parse_schedule(text, 1791656171)
+    assert [t["name"] for t in ts] == ["Upstate Challenge", "Rumble at the Rock", "Beach Bash", "Palmetto Regionals"]
+    assert ts[1]["start"] == "2027-01-30" and ts[2]["end"] == "2027-02-07" and ts[3]["dates"] == "Mar 26-27"
+    assert ts[0]["location"] == "Star Center, Spartanburg, SC" and ts[0]["dates"] == "TBA"
+    assert all(t["status"] == "tentative" for t in ts)
+
+
+def test_practice_rows_parse():
+    import tournaments as tn
+    text = "Weekly Practice Schedule\nRAGE IGNITED | All times are PM\nSunday 5-7 12U teams\nTuesday 5-7 13U Madisen & Eli 14U Kimora\nThursday 7-9 15U X\n"
+    assert tn.parse_practices(text) == [{"day": "Tuesday", "time": "5-7 PM", "coaches": "Madisen & Eli"}]
