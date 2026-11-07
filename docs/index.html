@@ -252,7 +252,7 @@
           <h3>${t.link ? `<a href="${esc(t.link)}" target="_blank" rel="noopener">${esc(t.name)}</a>` : esc(t.name)}</h3>
           <div class="line">${esc(t.dates)}${t.location ? ` · <a href="https://maps.google.com/?q=${encodeURIComponent(t.location)}" target="_blank" rel="noopener">${esc(t.location)}</a>` : ""}</div>
           ${t.notes ? `<div class="desc">${body(t.notes)}</div>` : ""}
-          <div class="acts"><span class="status ${esc(t.status)}">${esc(t.status)}</span>${days !== null && days >= 0 ? `<span class="countdown">${days === 0 ? "today" : days === 1 ? "tomorrow" : "in " + days + " days"}</span>` : ""}</div>
+          <div class="acts"><span class="status ${esc(t.status)}">${esc(t.status)}</span>${t.link ? `<a href="${esc(t.link)}" target="_blank" rel="noopener">Event page</a>` : ""}${days !== null && days >= 0 ? `<span class="countdown">${days === 0 ? "today" : days === 1 ? "tomorrow" : "in " + days + " days"}</span>` : ""}</div>
         </div>
       </article>`;
     };

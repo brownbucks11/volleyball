@@ -47,6 +47,27 @@
   "_senders": "messages from these display names are always kept",
   "senders": [],
   "_pinned_links": "always shown at the top of the Links tab",
-  "pinned_links": [],
+  "pinned_links": [
+    {
+      "title": "Palmetto Region girls tournament schedule (official dates & divisions)",
+      "url": "https://www.palmettoregionvb.org/girlstournamentschedule",
+      "note": "Dates/divisions can change; this is the source of truth for region events."
+    },
+    {
+      "title": "2027 hotel booking links (Palmetto Region)",
+      "url": "https://www.palmettoregionvb.org/hotels",
+      "note": "Regionals are stay-to-play \u2014 book through these."
+    },
+    {
+      "title": "AES \u2014 schedules & results",
+      "url": "https://www.advancedeventsystems.com/events",
+      "note": "Pool schedules post the Wednesday before each tournament."
+    },
+    {
+      "title": "Questions/Concerns form",
+      "url": "https://docs.google.com/forms/d/1h5EAlw-44CSTWeSQpnb_k5WVh-taZEIIaVb83chziJI/viewform",
+      "note": "The club's form for questions."
+    }
+  ],
   "_sources": "filter:false keeps everything in that chat; topic_of resolves a Topic's name from its parent group"
 }

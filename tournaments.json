@@ -1,0 +1,48 @@
+{
+  "_": "Your notes on top of what the schedule image says. Edit here or use: python tournaments.py \"Name\" --confirmed / --official / --note ...  Names match the image's rows (case/punctuation ignored).",
+  "season_year": 2027,
+  "tournaments": {
+    "Upstate Challenge": {
+      "dates": "Jan 10",
+      "location": "Spartanburg, SC",
+      "link": "https://www.palmettoregionvb.org/page/show/8732257-upstate-challenge",
+      "notes": "Palmetto Region event. 12U-14U play Sunday Jan 10 (15U-18U play Saturday). Schedule posts on AES the Wednesday before."
+    },
+    "Rumble at the Rock": {
+      "dates": "Jan 30",
+      "location": "Rock Hill Sports & Event Center, 326 Technology Center Way, Rock Hill, SC 29730",
+      "link": "https://www.palmettoregionvb.org/page/show/8200852-rumble-the-rock",
+      "notes": "Palmetto Region \"Rumble @ the Rock\". 12U-14U Club play Saturday Jan 30 (15U-18U Sunday). Park in Deck A or B off Dave Lyle; drop-off behind the building off Laurel St. Schedule on AES the Wednesday before."
+    },
+    "Beach Bash": {
+      "dates": "Feb 6-7",
+      "location": "Myrtle Beach Sports Center, 2115 Farlow St, Myrtle Beach, SC 29577",
+      "link": "https://www.palmettoregionvb.org/page/show/8200883-beach-ball-bash",
+      "notes": "Palmetto Region \"Beach Ball Bash\", 12U-18U Club & Power, two days — plan a hotel. Hotel booking: https://presto.eventpipe.com/event/bade3666-79fb-4485-9e7e-4eb52f31941b"
+    },
+    "Crosstown Throwdown": {
+      "dates": "Feb 14",
+      "location": "Columbia, SC (gym TBA)",
+      "link": "https://www.palmettoregionvb.org/page/show/8200842-crosstown-throwdown-club",
+      "notes": "Palmetto Region \"Crosstown Throwdown Club\". 12U-14U play Sunday Feb 14 (15U-18U Saturday). Venue not posted yet."
+    },
+    "Cl Challenge": {
+      "dates": "Mar 13",
+      "location": "Upstate, SC — Easley Rec / Christ Church Episcopal / Chapman HS / Ridge at Laurens (gym by division, TBA)",
+      "link": "https://www.palmettoregionvb.org/page/show/8206722-c1-challenge-12-14-club",
+      "notes": "Palmetto Region \"C1 Challenge\" (the image's \"Cl\" is OCR). Region schedule has 12U-13U Club on SATURDAY Mar 13; the club's image says Mar 14, which is the 14U day — confirm with the coach. Online check-in 3/8-3/11. Adult admission $20, kids free. Host: Carolina One."
+    },
+    "Palmetto Regionals": {
+      "dates": "Mar 26-27",
+      "location": "Rock Hill Sports & Event Center, 326 Technology Center Way, Rock Hill, SC 29730",
+      "link": "https://www.palmettoregionvb.org/page/show/8309177-pva-regional-championships",
+      "notes": "PVA Regional Championships Week 1 — 13 Girls, 2 days. STAY TO PLAY: hotels must be booked through the region's links (open 9/30/26, sent to club directors). Online check-in 3/20-3/24. Admission cash/check: $20/day or $35 for 2 days, kids free. Schedule on AES the Wednesday before. Stay-to-play policy: https://www.palmettoregionvb.org/page/show/3651936-regional-championships-stay-to-play-hotel-policy"
+    },
+    "Palmetto Smash": {
+      "dates": "Apr 17-18",
+      "location": "Prisma Health Performance Center, 1529 Hwy 14, Greer, SC 29651",
+      "link": "https://www.palmettoregionvb.org/page/show/9212130-pva-spring-smash",
+      "notes": "Palmetto Region \"PVA Spring Smash\", 12U-18U, two days in Greer. Hotel booking: https://presto.eventpipe.com/event/e0d8e7a1-f604-4737-bb02-53506bab045f"
+    }
+  }
+}
