@@ -9,6 +9,10 @@ on:
       backfill:
         description: "Messages to scan on a group's first run"
         default: "50"
+      rescan:
+        description: "Forget cursors and re-apply the rules to the last <backfill> messages"
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -37,7 +41,7 @@ jobs:
 
       - name: Fetch, rebuild, commit if changed
         run: |
-          python fetch.py --backfill "${{ inputs.backfill || '50' }}"
+          python fetch.py --backfill "${{ inputs.backfill || '50' }}" ${{ inputs.rescan == true && '--rescan' || '' }}
           python build_site.py
           git config user.name "announce-bot"
           git config user.email "actions@users.noreply.github.com"

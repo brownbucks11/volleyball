@@ -83,21 +83,32 @@ def new_messages(token, gid, after_id, backfill):
 
 
 def rules(cfg):
-    pats = [re.compile(r"\b" + re.escape(k) + r"\b", re.I) for k in cfg.get("keywords", [])]
-    pats += [re.compile(p, re.I) for p in cfg.get("regex", [])]
-    return pats, {s.lower() for s in cfg.get("senders", [])}
+    """Returns (keep_patterns, exclude_patterns, senders)."""
+    keep = [re.compile(r"\b" + re.escape(k) + r"\b", re.I) for k in cfg.get("keywords", [])]
+    keep += [re.compile(p, re.I) for p in cfg.get("regex", [])]
+    excl = [re.compile(p, re.I) for p in cfg.get("exclude_regex", [])]
+    return keep, excl, {s.lower() for s in cfg.get("senders", [])}
 
 
-def why(msg, pats, senders):
-    """Return the reason this message is kept, or None."""
-    if (msg.get("name") or "").lower() in senders:
-        return f"from {msg['name']}"
+def why(msg, keep, excl, senders, mode="exclude"):
+    """Return the reason this message is kept, or None.
+
+    mode "exclude" (default): keep everything unless an exclude pattern hits and no keep pattern does.
+    mode "include": keep only if a keep pattern or whitelisted sender hits.
+    """
+    name = msg.get("name") or ""
     text = msg.get("text") or ""
-    for p in pats:
-        m = p.search(text)
-        if m:
-            return f"matched \"{m.group(0)}\""
-    return None
+    if name.lower() in senders:
+        return f"from {name}"
+    hit = next((m for p in keep if (m := p.search(text))), None)
+    if hit:
+        return f"mentions \"{hit.group(0)}\""
+    if mode == "include":
+        return None
+    ex = next((m for p in excl if (m := p.search(text))), None)
+    if ex:
+        return None
+    return "no other age group named"
 
 
 def slim(msg, group_name, reason):
@@ -124,6 +135,7 @@ def main():
     ap.add_argument("--list-groups", action="store_true")
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--backfill", type=int, default=50, help="messages to scan on a group's first run")
+    ap.add_argument("--rescan", action="store_true", help="forget cursors and re-scan --backfill messages (re-applies rules to skipped ones)")
     args = ap.parse_args()
 
     token = os.environ.get("GROUPME_TOKEN")
@@ -135,8 +147,9 @@ def main():
         list_groups(token)
         return
 
-    pats, senders = rules(cfg)
-    state = jload(STATE, {})
+    keep, excl, senders = rules(cfg)
+    mode = cfg.get("mode", "exclude")
+    state = {} if args.rescan else jload(STATE, {})
     kept = jload(MESSAGES, [])
     skipped = jload(SKIPPED, [])
     seen = {m["id"] for m in kept}
@@ -149,7 +162,7 @@ def main():
         for m in msgs:
             if m.get("system") or m.get("sender_type") == "bot" or m["id"] in seen:
                 continue
-            r = why(m, pats, senders)
+            r = why(m, keep, excl, senders, mode)
             if r:
                 item = slim(m, gname, r)
                 kept.append(item)
@@ -161,7 +174,8 @@ def main():
                     post_bot(bot, f"[{gname}] {item['name']} @ {when}\n{item['text']}" +
                              ("".join("\n" + u for u in item["attachments"])))
             else:
-                skipped.append(slim(m, gname, None))
+                if not any(x["id"] == m["id"] for x in skipped):
+                    skipped.append(slim(m, gname, None))
         if msgs:
             state[gid] = msgs[-1]["id"]
 

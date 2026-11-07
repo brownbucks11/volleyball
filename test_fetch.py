@@ -5,43 +5,47 @@ from pathlib import Path
 import fetch
 
 CFG = json.loads((Path(__file__).parent / "config.json").read_text())
-PATS, SENDERS = fetch.rules(CFG)
+KEEP, EXCL, SENDERS = fetch.rules(CFG)
 
 
-def m(text, name="Director"):
-    return {"id": "1", "name": name, "text": text, "created_at": 0, "attachments": []}
+def why(text, name="Director", mode="exclude"):
+    return fetch.why({"id": "1", "name": name, "text": text, "created_at": 0}, KEEP, EXCL, SENDERS, mode)
 
 
-def test_keeps_13u_variants():
-    for t in ["13U practice at 6", "13u tourney", "13-U parents", "13 U travel info", "all 13s teams"]:
-        assert fetch.why(m(t), PATS, SENDERS), t
+def test_untagged_announcements_are_kept():
+    for t in ["First Week of Practices", "Picture day is Nov 15", "Director updated the time for the event 'Open Gym'", ""]:
+        assert why(t) == "no other age group named", t
 
 
-def test_keeps_club_wide_wording():
-    for t in ["ALL TEAMS: picture day", "Reminder for all age groups", "Everyone please pay dues", "Every team must RSVP"]:
-        assert fetch.why(m(t), PATS, SENDERS), t
+def test_other_age_groups_are_dropped():
+    for t in ["12u will be split into two teams", "created event '12u Girls Only!'", "15U bracket posted",
+              "14-U parents meeting", "the 16s play Sunday", "10U and 11U tryouts"]:
+        assert why(t) is None, t
 
 
-def test_drops_other_age_groups():
-    for t in ["15U bracket posted", "12U practice moved", "14s and 16s play Sunday", "130 chairs needed"]:
-        assert fetch.why(m(t), PATS, SENDERS) is None, t
+def test_13u_always_kept_even_with_other_ages():
+    for t in ["12u and 13u practice at 6", "13U tourney", "13-U parents", "all 13s teams"]:
+        assert why(t), t
+    assert why("12u and 13u practice").startswith("mentions")
 
 
-def test_no_false_hit_inside_words():
-    assert fetch.why(m("Court 113u is closed"), PATS, SENDERS) is None
+def test_club_wide_wording_overrides_exclusion():
+    assert why("ALL TEAMS 12u through 18u: picture day") == 'mentions "ALL TEAMS"'
+
+
+def test_no_false_hits_inside_words():
+    assert why("Court 113u is closed")            # not an age group
+    assert why("130 chairs and 115 shirts")       # numbers, not ages
+
+
+def test_include_mode_requires_a_keyword():
+    assert why("First Week of Practices", mode="include") is None
+    assert why("13U practice", mode="include") == 'mentions "13U"'
 
 
 def test_sender_whitelist_is_case_insensitive():
-    coach = CFG["senders"][0]
-    assert fetch.why(m("hi", name=coach.upper()), PATS, SENDERS) == f"from {coach.upper()}"
-
-
-def test_reason_names_the_match():
-    assert fetch.why(m("13U practice"), PATS, SENDERS) == 'matched "13U"'
-
-
-def test_empty_text_is_dropped():
-    assert fetch.why({"id": "1", "name": "x", "text": None, "created_at": 0}, PATS, SENDERS) is None
+    keep, excl, senders = fetch.rules({"senders": ["Coach Amy"]})
+    assert fetch.why({"name": "COACH AMY", "text": "12u only"}, keep, excl, senders) == "from COACH AMY"
 
 
 def test_slim_keeps_attachment_urls():

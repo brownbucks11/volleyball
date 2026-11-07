@@ -114,7 +114,7 @@
     const list = $("list");
     if (!items.length) { list.innerHTML = `<div class="empty">${tab === "kept" ? "Nothing yet." : "Nothing skipped recently."}</div>`; return; }
     let html = "", day = "";
-    if (tab === "skipped") html += `<p class="note">The last ${D.skipped.length} messages the filter did <b>not</b> keep. If something here should have been kept, add a keyword or sender to config.json.</p>`;
+    if (tab === "skipped") html += `<p class="note">The last ${D.skipped.length} messages the filter did <b>not</b> keep. These named another age group. If one should have been kept, add a keyword or sender to config.json.</p>`;
     for (const m of items) {
       const k = dayKey(m.ts);
       if (k !== day) { day = k; html += `<div class="day">${esc(k)}</div>`; }
@@ -123,7 +123,7 @@
         <div class="meta">${m.avatar ? `<img src="${esc(m.avatar)}" alt="">` : ""}<span class="who">${esc(m.name)}</span><span class="when">${fmt(m.ts * 1000)}</span></div>
         <div class="text">${body(m.text)}</div>
         ${(m.attachments || []).map((u) => /\.(png|jpe?g|gif|webp)|groupme\.com/i.test(u) ? `<div class="att"><a href="${esc(u)}" target="_blank" rel="noopener"><img src="${esc(u)}" loading="lazy" alt=""></a></div>` : `<div class="att"><a href="${esc(u)}" target="_blank" rel="noopener">${esc(u)}</a></div>`).join("")}
-        ${m.reason ? `<div class="why">Kept because it <span>${esc(m.reason)}</span></div>` : ""}
+        ${m.reason ? `<div class="why"><span>${esc(m.reason)}</span></div>` : ""}
       </article>`;
     }
     list.innerHTML = html;

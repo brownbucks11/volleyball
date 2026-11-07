@@ -1,10 +1,18 @@
 {
   "site_title": "13U Announcements",
-  "site_subtitle": "Club GroupMe, filtered down to what matters for 13U",
+  "site_subtitle": "Club GroupMe, minus the other age groups",
+  "mode": "exclude",
   "sources": [
     { "group_id": "118087776", "name": "Club Announcements" }
   ],
+
+  "_keywords": "anything matching these is ALWAYS kept, even if another age group is also named",
   "keywords": ["13u", "13-u", "13 u", "13s", "all teams", "all age groups", "all athletes", "everyone", "every team", "whole club"],
   "regex": ["\\b13\\s*-?\\s*u\\b"],
-  "senders": ["Coach Name Here"]
+
+  "_exclude_regex": "a message is dropped only if one of these hits and nothing above did",
+  "exclude_regex": ["\\b(1[0-2]|1[4-8])\\s*-?\\s*u\\b", "\\b(1[0-2]|1[4-8])s\\b"],
+
+  "_senders": "messages from these display names are always kept",
+  "senders": []
 }
