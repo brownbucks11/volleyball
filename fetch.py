@@ -214,10 +214,10 @@ def judge_pages(att, path, keep, excl, senders, mode):
     pages = []
     if path.suffix.lower() == ".pdf":
         for n, text, png in ocr.pdf_pages(path, FILES, path.stem):
-            pages.append({"n": n, "url": f"files/{png.name}", "text": text[:400]})
+            pages.append({"n": n, "url": f"files/{png.name}", "text": text[:6000]})
     else:
         text = ocr.ocr_image(path)
-        pages.append({"n": 1, "url": att.get("local") or att["url"], "text": (text or "")[:400], "unread": text is None})
+        pages.append({"n": 1, "url": att.get("local") or att["url"], "text": (text or "")[:6000], "unread": text is None})
     for pg in pages:
         r = why({"name": "", "text": pg["text"]}, keep, excl, senders, mode)
         pg["relevant"] = bool(r) or pg.get("unread", False)
