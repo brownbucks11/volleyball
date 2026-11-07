@@ -61,6 +61,16 @@ def list_groups(token):
         print(f"{g['id']:>10}  {g['name']}")
 
 
+def topics(token, gid):
+    """id -> topic name for a group's Topics (subgroups); {} if the endpoint fails."""
+    try:
+        subs = api(token, f"/groups/{gid}/subgroups", per_page=100) or []
+        return {str(t["id"]): t.get("topic") or t.get("name") or str(t["id"]) for t in subs}
+    except requests.HTTPError as e:
+        print(f"subgroups list failed for {gid}: {e}", file=sys.stderr)
+        return {}
+
+
 # ---------------------------------------------------------------- messages
 
 def new_messages(token, gid, after_id, backfill):
@@ -223,6 +233,7 @@ def fetch_events(token, gid, gname, keep, excl, senders, mode):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--list-groups", action="store_true")
+    ap.add_argument("--list-topics", metavar="GROUP_ID", help="show a group's Topics (sub-chats) and their IDs")
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--backfill", type=int, default=50, help="messages to scan on a group's first run")
     ap.add_argument("--rescan", action="store_true", help="forget cursors and re-scan --backfill messages")
@@ -236,6 +247,10 @@ def main():
     if args.list_groups:
         list_groups(token)
         return
+    if args.list_topics:
+        for tid, name in topics(token, args.list_topics).items():
+            print(f"{tid:>10}  {name}")
+        return
 
     keep, excl, senders = rules(cfg)
     mode = cfg.get("mode", "exclude")
@@ -247,8 +262,14 @@ def main():
     added = 0
     events = []
 
+    topic_names = {}
     for src in cfg["sources"]:
-        gid, gname = str(src["group_id"]), src.get("name", str(src["group_id"]))
+        if src.get("topic_of"):
+            topic_names.update(topics(token, src["topic_of"]))
+    for src in cfg["sources"]:
+        gid = str(src["group_id"])
+        gname = src.get("name") or topic_names.get(gid) or gid
+        print(f"== {gname} ({gid})")
         src_mode = "all" if src.get("filter") is False else mode
         msgs = new_messages(token, gid, state.get(gid), args.backfill)
         for m in msgs:

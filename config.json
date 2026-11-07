@@ -6,6 +6,21 @@
     {
       "group_id": "118087776",
       "name": "Club Announcements"
+    },
+    {
+      "group_id": "118087952",
+      "topic_of": "118087776",
+      "filter": false
+    },
+    {
+      "group_id": "118505034",
+      "topic_of": "118087776",
+      "filter": false
+    },
+    {
+      "group_id": "118088615",
+      "topic_of": "118087776",
+      "filter": false
     }
   ],
   "_keywords": "anything matching these is ALWAYS kept, even if another age group is also named",
@@ -32,5 +47,6 @@
   "_senders": "messages from these display names are always kept",
   "senders": [],
   "_pinned_links": "always shown at the top of the Links tab",
-  "pinned_links": []
+  "pinned_links": [],
+  "_sources": "filter:false keeps everything in that chat; topic_of resolves a Topic's name from its parent group"
 }
