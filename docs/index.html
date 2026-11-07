@@ -135,6 +135,8 @@
     return h;
   }
   function att(a) {
+    if (a.pages && a.pages.length && a.type === "file") return a.pages.map((p) => `<div class="att"><a href="${esc(a.url)}" target="_blank" rel="noopener"><img src="${esc(p.url)}" loading="lazy" alt=""></a></div>`).join("") + `<div class="tags"><a class="tag ev" href="${esc(a.url)}" target="_blank" rel="noopener">📄 ${esc(a.name || "PDF")}</a></div>`;
+    if (a.type === "image" && a.local) return `<div class="att"><a href="${esc(a.local)}" target="_blank" rel="noopener"><img src="${esc(a.local)}" loading="lazy" alt=""></a></div>`;
     if (a.type === "file" && a.url) return `<div class="tags"><a class="tag ev" href="${esc(a.url)}" target="_blank" rel="noopener">📄 ${esc(a.name || a.url.split("/").pop())}</a></div>`;
     if (a.type === "image") return `<div class="att"><a href="${esc(a.url)}" target="_blank" rel="noopener"><img src="${esc(a.url)}" loading="lazy" alt=""></a></div>`;
     if (a.url) return `<div class="att"><a href="${esc(a.url)}" target="_blank" rel="noopener">${esc(a.type)}: ${esc(a.url)}</a></div>`;

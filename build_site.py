@@ -41,10 +41,19 @@ for m in messages:
 
 for m in messages:
     m["action"] = bool(ACTION_RE.search(m["text"]))
+    # drop attachments the OCR judged irrelevant; a post with nothing left (no text, no relevant files) leaves the feed
+    m["attachments"] = [a for a in m.get("attachments", []) if a.get("relevant", True)]
+    for a in m["attachments"]:
+        if a.get("pages"):
+            a["pages"] = [p for p in a["pages"] if p["relevant"]]
+    m["hidden"] = not m["text"].strip() and not m["attachments"]
+    if m["text"].strip() == "This message was deleted":
+        m["hidden"] = True
+feed = [m for m in messages if not m["hidden"]]
 
 # ---- files: every image / PDF page posted in a kept message, newest first, with the OCR verdict
 files = []
-for m in messages:
+for m in load("messages.json", []):
     for a in m.get("attachments", []):
         if a["type"] not in ("image", "file") or not a.get("url"):
             continue
@@ -64,7 +73,7 @@ payload = {
     "keywords": cfg.get("keywords", []),
     "pinned": cfg.get("pinned_links", []),
     "ics": "ics/13u.ics",
-    "messages": messages,
+    "messages": feed,
     "events": events,
     "links": links,
     "files": files,
@@ -104,4 +113,4 @@ lines.append("END:VCALENDAR")
 (DOCS / "ics").mkdir(exist_ok=True)
 (DOCS / "ics" / "13u.ics").write_text("\r\n".join(lines) + "\r\n")
 
-print(f"wrote data.js: {len(messages)} messages, {len(events)} events, {len(links)} links, {len(files)} files")
+print(f"wrote data.js: {len(feed)} messages, {len(events)} events, {len(links)} links, {len(files)} files")
