@@ -32,8 +32,8 @@
   "timezone": "America/New_York",
   "location": null,
   "image": "https://i.groupme.com/1320x1931.jpeg.6b7376b6d56e426a8d1ff8f7de86b8e8",
-  "going": 17,
-  "updated": "2026-11-11T01:16:56Z",
+  "going": 16,
+  "updated": "2026-11-12T01:34:22Z",
   "deleted": false,
   "reason": null,
   "kept": false
@@ -54,8 +54,8 @@
    "lng": -80.974193
   },
   "image": "https://i.groupme.com/200x133.gif.afe633d184c449e9b6d333f60a1919f3",
-  "going": 52,
-  "updated": "2026-11-11T00:30:16Z",
+  "going": 53,
+  "updated": "2026-11-12T00:09:37Z",
   "deleted": false,
   "reason": "no other age group named",
   "kept": true
