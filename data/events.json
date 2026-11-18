@@ -39,6 +39,23 @@
   "kept": false
  },
  {
+  "event_id": "a3f7c8d747084304a91d8bafe481b1c3",
+  "group": "Club Announcements",
+  "name": "12u Open Gym",
+  "description": "Organized by parents for the 12u girls to bond. \n\nRSVP as soon as possible",
+  "start": "2026-11-19T18:00:00-05:00",
+  "end": "2026-11-19T19:00:00-05:00",
+  "all_day": false,
+  "timezone": "America/New_York",
+  "location": null,
+  "image": "https://i.groupme.com/1233x1275.jpeg.2466795bbc0645a38dbbe57419502707",
+  "going": 7,
+  "updated": "2026-11-18T01:20:29Z",
+  "deleted": false,
+  "reason": null,
+  "kept": false
+ },
+ {
   "event_id": "f02c49d30a59446eb0b0dc7ad72ea538",
   "group": "Club Announcements",
   "name": "Parent Meeting",
